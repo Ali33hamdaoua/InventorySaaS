@@ -10,6 +10,7 @@ import { currency, cn, toNumber, parseDecimalInput, formatNumber } from '@/lib/u
 import { ArrowRightLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Permission, useHasPermission } from '@/lib/permissions';
+import { CURRENCY } from '@/lib/brand';
 
 /** data-attribute used by Enter-to-next-row keyboard navigation. */
 const COUNT_INPUT_ATTR = 'data-count-idx';
@@ -119,7 +120,7 @@ export const InventoryLinesTable = React.memo(function InventoryLinesTable({
             <th className="hidden px-3 pb-2 text-right font-medium lg:table-cell">Achats qté</th>
             <th className="px-3 pb-2 text-right font-medium" title="Transferts In - Transferts Out">Transferts qté</th>
             <th className="px-3 pb-2 text-right font-medium text-emerald-600 dark:text-emerald-400" title="Début + Achats + Transferts">Qté disponible</th>
-            <th className="hidden px-3 pb-2 text-right font-medium lg:table-cell">Achats $</th>
+            <th className="hidden px-3 pb-2 text-right font-medium lg:table-cell">Achats {CURRENCY.symbol}</th>
             <th className="px-3 pb-2 text-right font-medium text-primary">Fin qté (saisie)</th>
             <th
               className="px-3 pb-2 text-right font-medium"

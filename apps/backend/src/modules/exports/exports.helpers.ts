@@ -1,6 +1,15 @@
 import { Logger } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import puppeteer, { Browser } from 'puppeteer';
+import {
+  BRAND_NAME,
+  APP_NAME,
+  BRAND_PRIMARY_COLOR,
+  BRAND_PRIMARY_ARGB,
+  CURRENCY_SYMBOL,
+  LOCALE,
+  exportFooter,
+} from '../../common/config/brand';
 
 /* ============================================================
    PDF rendering — singleton headless Chromium via Puppeteer.
@@ -91,17 +100,16 @@ export async function renderPdfFromHtml(html: string): Promise<Buffer> {
    Currency / date / filter formatting helpers
    ============================================================ */
 
-const CAD = new Intl.NumberFormat('fr-CA', {
-  style: 'currency',
-  currency: 'CAD',
+const AMOUNT = new Intl.NumberFormat(LOCALE, {
   minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 });
-const PCT = new Intl.NumberFormat('fr-CA', {
+const PCT = new Intl.NumberFormat(LOCALE, {
   style: 'percent',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
-const DATE = new Intl.DateTimeFormat('fr-CA', {
+const DATE = new Intl.DateTimeFormat(LOCALE, {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
@@ -109,7 +117,7 @@ const DATE = new Intl.DateTimeFormat('fr-CA', {
 
 export function fmtCurrency(v: unknown): string {
   const n = Number(v ?? 0);
-  return Number.isFinite(n) ? CAD.format(n) : '—';
+  return Number.isFinite(n) ? `${AMOUNT.format(n)} ${CURRENCY_SYMBOL}` : '—';
 }
 export function fmtPct(v: unknown): string {
   const n = Number(v ?? 0);
@@ -124,7 +132,7 @@ export function fmtDate(v: unknown): string {
 export function fmtNumber(v: unknown, digits = 2): string {
   const n = Number(v ?? 0);
   return Number.isFinite(n)
-    ? n.toLocaleString('fr-CA', {
+    ? n.toLocaleString(LOCALE, {
         minimumFractionDigits: digits,
         maximumFractionDigits: digits,
       })
@@ -175,8 +183,8 @@ function colLetter(n: number): string {
 
 export async function buildExcel<T>(spec: ExcelExportSpec<T>): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
-  wb.creator = 'Inventory MDB';
-  wb.company = 'La Maison du Burger';
+  wb.creator = APP_NAME;
+  wb.company = BRAND_NAME;
   wb.created = new Date();
 
   const ws = wb.addWorksheet(spec.sheetName);
@@ -186,11 +194,11 @@ export async function buildExcel<T>(spec: ExcelExportSpec<T>): Promise<Buffer> {
   ws.mergeCells(`A1:${lastCol}1`);
   const titleCell = ws.getCell('A1');
   titleCell.value = spec.title;
-  titleCell.font = { bold: true, size: 14, color: { argb: 'FFED312E' } };
+  titleCell.font = { bold: true, size: 14, color: { argb: BRAND_PRIMARY_ARGB } };
 
   // Subtitle
   ws.mergeCells(`A2:${lastCol}2`);
-  ws.getCell('A2').value = `Généré le ${DATE.format(new Date())} — Inventory MDB · La Maison du Burger`;
+  ws.getCell('A2').value = exportFooter(DATE.format(new Date()));
   ws.getCell('A2').font = { italic: true, size: 10, color: { argb: 'FF888888' } };
 
   // Filters (one row per filter)
@@ -209,7 +217,7 @@ export async function buildExcel<T>(spec: ExcelExportSpec<T>): Promise<Buffer> {
     const cell = headerRow.getCell(idx + 1);
     cell.value = c.header;
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFED312E' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_PRIMARY_ARGB } };
     cell.alignment = {
       vertical: 'middle',
       horizontal: c.alignment?.horizontal ?? 'left',
@@ -276,7 +284,7 @@ function pdfBaseStyle() {
       font-size: 11px;
     }
     .title {
-      color: #ED312E;
+      color: ${BRAND_PRIMARY_COLOR};
       font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.01em;
@@ -311,7 +319,7 @@ function pdfBaseStyle() {
       font-size: 10px;
     }
     thead th {
-      background: #ED312E;
+      background: ${BRAND_PRIMARY_COLOR};
       color: #fff;
       text-align: left;
       padding: 8px 10px;
@@ -330,7 +338,7 @@ function pdfBaseStyle() {
     tbody td.center, thead th.center { text-align: center; }
     tfoot td {
       padding: 9px 10px;
-      border-top: 2px solid #ED312E;
+      border-top: 2px solid ${BRAND_PRIMARY_COLOR};
       font-weight: 700;
       background: #fff8f8;
     }
@@ -398,7 +406,7 @@ export function renderPdfHtml<T>(spec: PdfExportSpec<T>): string {
 </head>
 <body style="padding: 18mm 14mm;">
   <h1 class="title">${escapeHtml(spec.title)}</h1>
-  <div class="subtitle">Généré le ${escapeHtml(DATE.format(new Date()))} — Inventory MDB · La Maison du Burger</div>
+  <div class="subtitle">${escapeHtml(exportFooter(DATE.format(new Date())))}</div>
   ${filters}
   <table>
     <thead><tr>${headerCells}</tr></thead>

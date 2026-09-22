@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { currency, formatNumber, toNumber } from '@/lib/utils';
+import { CURRENCY } from '@/lib/brand';
 
 export interface DraftItem {
   productId: string;
@@ -410,7 +411,7 @@ function LineRow({
               title={`Prix par ${pkgName}`}
             />
             <span className="w-14 text-[10px] font-medium text-muted-foreground">
-              $ / {pkgName}
+              {CURRENCY.symbol} / {pkgName}
             </span>
           </div>
           <div className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-muted-foreground">
@@ -429,7 +430,7 @@ function LineRow({
               title={`Prix par ${unit}`}
             />
             <span className="w-14 text-[10px] font-medium text-muted-foreground">
-              $ / {unit}
+              {CURRENCY.symbol} / {unit}
             </span>
           </div>
         </div>

@@ -130,7 +130,7 @@ export function ProductImportPreviewTable({ rows, onInactiveActionChange }: Prop
                         <input
                           type="radio"
                           name={`inactive-${r.rowNumber}`}
-                          className="h-3 w-3 accent-[#ED312E]"
+                          className="h-3 w-3 accent-[hsl(var(--primary))]"
                           checked={r.inactiveAction === 'REACTIVATE_AND_UPDATE'}
                           onChange={() =>
                             onInactiveActionChange?.(r.rowNumber, 'REACTIVATE_AND_UPDATE')

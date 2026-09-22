@@ -264,7 +264,7 @@ export class InventoryPeriodsService {
       where: { id },
       include: { report: true },
     });
-    if (!p) throw new NotFoundException('PÃ©riode introuvable');
+    if (!p) throw new NotFoundException('Période introuvable');
     return this.serialize(p);
   }
 
@@ -274,7 +274,7 @@ export class InventoryPeriodsService {
       where: { id },
       include: { report: true },
     });
-    if (!p) throw new NotFoundException('PÃ©riode introuvable');
+    if (!p) throw new NotFoundException('Période introuvable');
     return p;
   }
 
@@ -405,7 +405,7 @@ export class InventoryPeriodsService {
     const exists = await this.prisma.inventoryPeriod.findUnique({
       where: { branchId_year_month: { branchId, year: dto.year, month: dto.month } },
     });
-    if (exists) throw new ConflictException('Cette pÃ©riode existe dÃ©jÃ  pour cette branche');
+    if (exists) throw new ConflictException('Cette période existe déjà pour cette branche');
 
     const created = await this.prisma.$transaction(async (tx) => {
       const period = await tx.inventoryPeriod.create({
@@ -449,7 +449,7 @@ export class InventoryPeriodsService {
   async close(id: string, dto: ClosePeriodDto) {
     const period = await this.findOneRaw(id);
     if (period.status === PeriodStatus.CLOSED) {
-      throw new BadRequestException('PÃ©riode dÃ©jÃ  clÃ´turÃ©e');
+      throw new BadRequestException('Période déjà clôturée');
     }
 
     // Long transaction: aggregate purchases, update N lines, upsert report,

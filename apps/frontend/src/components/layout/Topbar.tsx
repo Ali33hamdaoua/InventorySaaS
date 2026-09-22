@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 import { BranchSwitcher } from './BranchSwitcher';
+import { BRAND } from '@/lib/brand';
 
 export function Topbar() {
   const navigate = useNavigate();
@@ -15,11 +16,11 @@ export function Topbar() {
   const initial = user?.name?.[0]?.toUpperCase() ?? '?';
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border/60 bg-[#141414] px-6">
+    <header className="flex h-16 items-center justify-between border-b border-border/60 bg-card px-6">
       <div className="flex items-center gap-3 text-sm">
         <BranchSwitcher />
         <span className="hidden text-[10px] uppercase tracking-[0.18em] text-muted-foreground md:inline">
-          La Maison du Burger · suivi multi-sites
+          {BRAND.name} · {BRAND.subtitle}
         </span>
       </div>
 

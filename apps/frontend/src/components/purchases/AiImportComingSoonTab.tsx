@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { primaryAlpha } from '@/lib/brand';
 
 interface Step {
   num: number;
@@ -68,7 +69,8 @@ export function AiImportComingSoonTab() {
           className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent"
         />
         <CardContent className="flex flex-col gap-5 p-8 sm:flex-row sm:items-start">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-[0_8px_24px_rgba(237,49,46,0.18)]">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary"
+            style={{ boxShadow: `0 8px 24px ${primaryAlpha(0.18)}` }}>
             <Sparkles className="h-7 w-7" />
           </div>
           <div className="flex-1 space-y-3">

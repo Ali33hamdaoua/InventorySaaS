@@ -42,7 +42,7 @@ export class CreateUserDto {
   @ApiPropertyOptional({
     format: 'uuid',
     description:
-      'Branche assignÃ©e. Obligatoire pour MANAGER. null pour OWNER/ADMIN avec accÃ¨s Ã  toutes les succursales.',
+      'Branche assignée. Obligatoire pour MANAGER. null pour OWNER/ADMIN avec accès à toutes les succursales.',
     nullable: true,
   })
   @IsOptional()

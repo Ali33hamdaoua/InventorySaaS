@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { UserRoleBadge } from './UserRoleBadge';
 import { UserStatusBadge } from './UserStatusBadge';
 import { UserBranchBadge } from './UserBranchBadge';
+import { CURRENCY } from '@/lib/brand';
 
 interface Props {
   users: User[];
@@ -14,7 +15,7 @@ interface Props {
   onToggle: (user: User) => void;
 }
 
-const dateFormatter = new Intl.DateTimeFormat('fr-CA', {
+const dateFormatter = new Intl.DateTimeFormat(CURRENCY.locale, {
   day: '2-digit',
   month: 'short',
   year: 'numeric',

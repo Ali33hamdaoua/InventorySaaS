@@ -259,7 +259,7 @@ export function UserFormDialog({ open, onOpenChange, user }: Props) {
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 accent-[#ED312E]"
+              className="h-4 w-4 accent-[hsl(var(--primary))]"
             />
             <span>Compte actif (peut se connecter)</span>
           </label>

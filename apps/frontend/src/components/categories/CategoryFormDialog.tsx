@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { BRAND } from '@/lib/brand';
 
 interface Props {
   open: boolean;
@@ -104,7 +105,7 @@ export function CategoryFormDialog({ open, onOpenChange, category }: Props) {
           <DialogTitle>{isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie'}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Mettez à jour les informations de la catégorie. Les seeds La Maison du Burger restent modifiables.'
+              ? `Mettez à jour les informations de la catégorie. Les seeds ${BRAND.name} restent modifiables.`
               : 'Les catégories sont disponibles dynamiquement dans Products, Purchases et le Dashboard.'}
           </DialogDescription>
         </DialogHeader>
@@ -170,7 +171,7 @@ export function CategoryFormDialog({ open, onOpenChange, category }: Props) {
               <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-border/60 bg-background px-3 text-sm">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 accent-[#ED312E]"
+                  className="h-4 w-4 accent-[hsl(var(--primary))]"
                   {...form.register('isActive')}
                 />
                 Catégorie active

@@ -532,7 +532,7 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
           >
             <input
               type="checkbox"
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[#ED312E]"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--primary))]"
               checked={includeInFinancialReports}
               onChange={(e) => setIncludeInFinancialReports(e.target.checked)}
             />

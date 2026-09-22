@@ -1,5 +1,6 @@
 import { FileSpreadsheet, Info, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CURRENCY } from '@/lib/brand';
 
 interface Props {
   onDownloadTemplate: () => Promise<void> | void;
@@ -11,7 +12,7 @@ const COLUMNS = [
   { name: 'category', required: true, hint: 'Nom EXACT d\'une catégorie existante' },
   { name: 'supplier', required: false, hint: 'Nom EXACT d\'un fournisseur existant (optionnel)' },
   { name: 'unit', required: true, hint: 'kg, g, L, ml, unit, box, pack, bag' },
-  { name: 'defaultCost', required: true, hint: 'Nombre ≥ 0 (CAD)' },
+  { name: 'defaultCost', required: true, hint: `Nombre ≥ 0 (${CURRENCY.code})` },
   { name: 'minStockLevel', required: false, hint: 'Nombre ≥ 0 (défaut 0)' },
   { name: 'isActive', required: false, hint: 'true / false / oui / non (défaut true)' },
 ];

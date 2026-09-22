@@ -30,7 +30,7 @@ export class ListAccountingExpensesDto {
   @Max(200)
   pageSize: number = 25;
 
-  @ApiPropertyOptional({ description: 'Recherche sur description, fournisseur libre ou nÂ° facture' })
+  @ApiPropertyOptional({ description: 'Recherche sur description, fournisseur libre ou n° facture' })
   @IsOptional()
   @IsString()
   search?: string;
@@ -81,7 +81,7 @@ export class ListAccountingExpensesDto {
   @Min(0)
   maxAmount?: number;
 
-  @ApiPropertyOptional({ description: 'true â†’ inclut les dÃ©penses soft-deleted' })
+  @ApiPropertyOptional({ description: 'true â†’ inclut les dépenses soft-deleted' })
   @IsOptional()
   @IsBooleanString()
   includeDeleted?: string;

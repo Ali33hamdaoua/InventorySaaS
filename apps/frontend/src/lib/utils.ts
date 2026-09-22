@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { CURRENCY } from '@/lib/brand';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -56,20 +57,33 @@ export function parseDecimalInput(raw: string): string {
   return cleaned;
 }
 
-export const currency = new Intl.NumberFormat('fr-CA', {
-  style: 'currency',
-  currency: 'CAD',
+const currencyDigits = new Intl.NumberFormat(CURRENCY.locale, {
   minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 });
 
-export const currencyCompact = new Intl.NumberFormat('fr-CA', {
-  style: 'currency',
-  currency: 'CAD',
+const currencyDigitsCompact = new Intl.NumberFormat(CURRENCY.locale, {
   maximumFractionDigits: 0,
 });
 
+/**
+ * Exposed as an object with `.format()` so the ~100 existing
+ * `currency.format(x)` call sites keep working unchanged. The symbol is
+ * appended by hand — see the note on CURRENCY in lib/brand.ts.
+ */
+export const currency = {
+  format: (n: number) => `${currencyDigits.format(n)} ${CURRENCY.symbol}`,
+};
+
+export const currencyCompact = {
+  format: (n: number) => `${currencyDigitsCompact.format(n)} ${CURRENCY.symbol}`,
+};
+
 export const formatNumber = (n: number, digits = 2) =>
-  new Intl.NumberFormat('fr-CA', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n);
+  new Intl.NumberFormat(CURRENCY.locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(n);
 
 export const formatPercent = (n: number | null | undefined, digits = 2) =>
   n == null ? '—' : `${formatNumber(n, digits)} %`;
@@ -153,7 +167,7 @@ const DEFAULT_BUSINESS_DATE_FMT: Intl.DateTimeFormatOptions = {
 export function formatBusinessDate(
   value: string | null | undefined,
   options?: Intl.DateTimeFormatOptions,
-  locale: string = 'fr-CA',
+  locale: string = CURRENCY.locale,
 ): string {
   if (!value) return '—';
   const dt = parseBusinessDate(value);

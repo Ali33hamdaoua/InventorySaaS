@@ -38,6 +38,7 @@ import { StockTransferDialog } from '@/components/inventory/StockTransferDialog'
 import { ExportDropdownButton } from '@/components/exports/ExportDropdownButton';
 import { exportsService } from '@/services/exports.service';
 import { MONTHS_FR, toNumber } from '@/lib/utils';
+import { CURRENCY } from '@/lib/brand';
 
 function lineToDraft(l: InventoryLine): LineDraft {
   return {
@@ -423,7 +424,7 @@ export default function InventoryDetailPage() {
                 {aggregates.missingCostCount > 1 ? 's' : ''} sans prix unitaire
               </p>
               <p className="text-xs text-muted-foreground">
-                Ces lignes ont un prix à 0 $ — soit aucun achat n'a été enregistré pour ce
+                Ces lignes ont un prix à 0 {CURRENCY.symbol} — soit aucun achat n'a été enregistré pour ce
                 produit ce mois-ci, soit aucun coût de référence n'est défini. Les valeurs
                 début / fin / consommation resteront à 0 jusqu'à ce qu'un{' '}
                 <strong>achat fournisseur</strong> soit saisi (le coût moyen pondéré sera

@@ -6,6 +6,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'sonner';
 import App from './app/App';
 import './index.css';
+import { applyBrandTheme } from './lib/brand';
+
+// Must run before the first render so components never paint with the
+// compiled-in default palette when env vars override it.
+applyBrandTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {

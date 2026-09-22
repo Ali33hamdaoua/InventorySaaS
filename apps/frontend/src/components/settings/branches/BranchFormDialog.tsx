@@ -171,7 +171,7 @@ export function BranchFormDialog({ open, onOpenChange, branch }: Props) {
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 accent-[#ED312E]"
+              className="h-4 w-4 accent-[hsl(var(--primary))]"
             />
             <span>Succursale active</span>
           </label>

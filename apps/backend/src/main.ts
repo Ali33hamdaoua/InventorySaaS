@@ -4,6 +4,7 @@ import { ClassSerializerInterceptor, ValidationPipe, Logger } from '@nestjs/comm
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { APP_NAME, BRAND_NAME } from './common/config/brand';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -38,8 +39,8 @@ async function bootstrap() {
 
   if (swaggerEnabled) {
     const config = new DocumentBuilder()
-      .setTitle('Inventory MDB API')
-      .setDescription('Global inventory & food cost control API')
+      .setTitle(`${APP_NAME} API`)
+      .setDescription(`Inventory & food cost control API — ${BRAND_NAME}`)
       .setVersion('0.1.0')
       .addBearerAuth()
       .build();

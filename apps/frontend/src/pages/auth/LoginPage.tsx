@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/brand/Logo';
+import { BRAND, primaryAlpha } from '@/lib/brand';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -42,15 +43,18 @@ export default function LoginPage() {
         className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           background:
-            'radial-gradient(700px circle at 80% 20%, rgba(237,49,46,0.18), transparent 60%), radial-gradient(500px circle at 10% 90%, rgba(237,49,46,0.10), transparent 60%)',
+            `radial-gradient(700px circle at 80% 20%, ${primaryAlpha(0.18)}, transparent 60%), radial-gradient(500px circle at 10% 90%, ${primaryAlpha(0.1)}, transparent 60%)`,
         }}
       />
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="flex flex-col items-center gap-3 text-center">
-          <Logo size={96} className="drop-shadow-[0_8px_30px_rgba(237,49,46,0.45)]" />
+          <Logo
+            size={96}
+            style={{ filter: `drop-shadow(0 8px 30px ${primaryAlpha(0.45)})` }}
+          />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">La Maison du Burger</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{BRAND.name}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Plateforme de gestion d'inventaire
             </p>

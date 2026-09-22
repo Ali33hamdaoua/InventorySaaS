@@ -34,6 +34,7 @@ import type { Supplier } from '@/services/suppliers.service';
 import { cn, toNumber } from '@/lib/utils';
 import { useActiveBranch } from '@/hooks/useActiveBranch';
 import { useAuthStore } from '@/stores/auth.store';
+import { CURRENCY } from '@/lib/brand';
 
 /** Form-side schema. We don't import the shared one because we want
  *  string-input-friendly types here (the API expects numbers, RHF gives strings). */
@@ -304,7 +305,7 @@ export function ProductFormDialog({
                   <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-border/60 bg-background px-3 py-2 text-xs">
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 accent-[#ED312E]"
+                      className="h-3.5 w-3.5 accent-[hsl(var(--primary))]"
                       {...form.register('isActive')}
                     />
                     Actif
@@ -423,7 +424,7 @@ export function ProductFormDialog({
               <div className="space-y-1.5">
                 <Label htmlFor="defaultCost" className="flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                  Coût par défaut (CAD) <span className="text-destructive">*</span>
+                  Coût par défaut ({CURRENCY.code}) <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="defaultCost"
@@ -463,7 +464,7 @@ export function ProductFormDialog({
                 <label className="flex cursor-pointer items-center gap-3 rounded-md border border-border/60 bg-background/40 px-3 py-2 text-sm transition-colors hover:border-primary/40 sm:col-span-2">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 shrink-0 accent-[#ED312E]"
+                    className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))]"
                     {...form.register('copyToOtherBranch')}
                   />
                   <span className="flex-1">
@@ -484,7 +485,7 @@ export function ProductFormDialog({
                 <label className="flex cursor-pointer items-center gap-2.5 px-3 py-2.5 text-sm">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 shrink-0 accent-[#ED312E]"
+                    className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))]"
                     {...form.register('packagingEnabled')}
                   />
                   <Package className="h-4 w-4 shrink-0 text-primary" />
@@ -568,7 +569,7 @@ export function ProductFormDialog({
                           </span>{' '}
                           →{' '}
                           <span className="font-semibold text-primary">
-                            {(2 * pkgFactor + 1).toLocaleString('fr-CA')} {unitLabel}
+                            {(2 * pkgFactor + 1).toLocaleString(CURRENCY.locale)} {unitLabel}
                           </span>{' '}
                           stockés
                         </span>

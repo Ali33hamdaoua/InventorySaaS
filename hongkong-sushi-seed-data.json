@@ -1,0 +1,2218 @@
+{
+  "client": {
+    "name": "Hong Kong Sushi",
+    "city": "Agadir",
+    "currency": "MAD"
+  },
+  "suppliers": [
+    {
+      "name": "Marée Souss",
+      "type": "Poissonnier",
+      "note": "poissons & fruits de mer frais"
+    },
+    {
+      "name": "Asia Food Import",
+      "type": "Épicerie asiatique",
+      "note": "nori, riz sushi, sauces, surgelés"
+    },
+    {
+      "name": "Boucherie Al Amal",
+      "type": "Boucher",
+      "note": "poulet, bœuf, œufs"
+    },
+    {
+      "name": "Primeur Inezgane",
+      "type": "Primeur",
+      "note": "fruits, légumes, herbes"
+    },
+    {
+      "name": "Distri Frais Agadir",
+      "type": "Grossiste",
+      "note": "crèmerie, sec, huile"
+    },
+    {
+      "name": "Distri Boissons Souss",
+      "type": "Boissons",
+      "note": "sodas, eaux, capsules"
+    },
+    {
+      "name": "Emballages Pro Maroc",
+      "type": "Emballages",
+      "note": "plateaux, bols, sacs"
+    },
+    {
+      "name": "Hygiène Plus",
+      "type": "Entretien",
+      "note": "produits d'entretien & EPI"
+    }
+  ],
+  "ingredients": [
+    {
+      "name": "Saumon frais (filet)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 230,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Thon rouge / albacore (longe)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 190,
+      "supplier": "Marée Souss",
+      "source": "nom"
+    },
+    {
+      "name": "Saumon fumé",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 260,
+      "supplier": "Marée Souss",
+      "source": "nom"
+    },
+    {
+      "name": "Crevettes décortiquées (ebi)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 140,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Crevettes panées (ebi fry) surgelées",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 120,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Gambas",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 180,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Crevettes Black Tiger",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 260,
+      "supplier": "Marée Souss",
+      "source": "nom"
+    },
+    {
+      "name": "Surimi (bâtonnets)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 55,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Chair de crabe",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 220,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Anguille grillée (unagi) surgelée",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 380,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Tobiko (œufs de poisson volant)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 320,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Calamar",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 90,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Poulpe",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 110,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Poisson blanc (filet)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 85,
+      "supplier": "Marée Souss",
+      "source": "site"
+    },
+    {
+      "name": "Filet de loup (bar)",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 130,
+      "supplier": "Marée Souss",
+      "source": "nom"
+    },
+    {
+      "name": "Noix de Saint-Jacques",
+      "category": "Poissons & fruits de mer",
+      "unit": "kg",
+      "unit_price_estimate_mad": 420,
+      "supplier": "Marée Souss",
+      "source": "nom"
+    },
+    {
+      "name": "Filet de poulet",
+      "category": "Viandes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 62,
+      "supplier": "Boucherie Al Amal",
+      "source": "nom"
+    },
+    {
+      "name": "Cuisses de poulet",
+      "category": "Viandes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 38,
+      "supplier": "Boucherie Al Amal",
+      "source": "nom"
+    },
+    {
+      "name": "Bœuf (rumsteck / filet)",
+      "category": "Viandes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 140,
+      "supplier": "Boucherie Al Amal",
+      "source": "site"
+    },
+    {
+      "name": "Œufs",
+      "category": "Viandes",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 1.3,
+      "supplier": "Boucherie Al Amal",
+      "source": "site"
+    },
+    {
+      "name": "Riz à sushi (japonica)",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 32,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Feuilles de nori",
+      "category": "Épicerie asiatique",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 2.8,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Vinaigre de riz",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 35,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Sauce soja",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 28,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Wasabi (pâte/poudre)",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 160,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Gingembre mariné (gari)",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 55,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Graines de sésame",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 60,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Panko",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 48,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Farine tempura",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 45,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Galettes de riz (rouleaux de printemps)",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 70,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Feuilles de brick / pâte à nems",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 60,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Wakamé / goma wakame",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 120,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Shichimi togarashi",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 180,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Nouilles (udon / ramen / sautées)",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 35,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Pâte miso",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 90,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Champignons shiitake séchés",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 220,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Lait de coco",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 40,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Pâte de curry rouge",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 95,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Pâte de curry vert",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 95,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Pâte de curry massaman",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 110,
+      "supplier": "Asia Food Import",
+      "source": "site"
+    },
+    {
+      "name": "Sauce sucrée anguille (unagi/teriyaki)",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 60,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Sauce sweet chili / sweet & sour",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 40,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Sauce huître",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 45,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Sriracha",
+      "category": "Épicerie asiatique",
+      "unit": "L",
+      "unit_price_estimate_mad": 55,
+      "supplier": "Asia Food Import",
+      "source": "base"
+    },
+    {
+      "name": "Thé vert japonais",
+      "category": "Épicerie asiatique",
+      "unit": "kg",
+      "unit_price_estimate_mad": 250,
+      "supplier": "Asia Food Import",
+      "source": "nom"
+    },
+    {
+      "name": "Cream cheese",
+      "category": "Crèmerie",
+      "unit": "kg",
+      "unit_price_estimate_mad": 115,
+      "supplier": "Distri Frais Agadir",
+      "source": "site"
+    },
+    {
+      "name": "Mozzarella",
+      "category": "Crèmerie",
+      "unit": "kg",
+      "unit_price_estimate_mad": 85,
+      "supplier": "Distri Frais Agadir",
+      "source": "site"
+    },
+    {
+      "name": "Mayonnaise (seau)",
+      "category": "Crèmerie",
+      "unit": "kg",
+      "unit_price_estimate_mad": 30,
+      "supplier": "Distri Frais Agadir",
+      "source": "base"
+    },
+    {
+      "name": "Avocat",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 35,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Mangue",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 40,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Concombre",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 6,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Carotte",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Poireau",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 8,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Oignon",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Échalote",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 18,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Poivrons (vert/jaune/rouge)",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 10,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Brocoli",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 15,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Chou-fleur",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 8,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Haricots verts",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 14,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Chou",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Tomate cerise",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 20,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Pomme de terre",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Germes de soja",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 25,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Gingembre frais",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 40,
+      "supplier": "Primeur Inezgane",
+      "source": "nom"
+    },
+    {
+      "name": "Citron",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 10,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Orange (à jus)",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "nom"
+    },
+    {
+      "name": "Menthe (botte)",
+      "category": "Fruits & légumes",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 2,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Coriandre (botte)",
+      "category": "Fruits & légumes",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 2,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Basilic thaï (botte)",
+      "category": "Fruits & légumes",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Primeur Inezgane",
+      "source": "nom"
+    },
+    {
+      "name": "Ciboulette (botte)",
+      "category": "Fruits & légumes",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 4,
+      "supplier": "Primeur Inezgane",
+      "source": "site"
+    },
+    {
+      "name": "Champignons de Paris",
+      "category": "Fruits & légumes",
+      "unit": "kg",
+      "unit_price_estimate_mad": 25,
+      "supplier": "Primeur Inezgane",
+      "source": "nom"
+    },
+    {
+      "name": "Noix de cajou",
+      "category": "Épicerie sèche",
+      "unit": "kg",
+      "unit_price_estimate_mad": 150,
+      "supplier": "Distri Frais Agadir",
+      "source": "site"
+    },
+    {
+      "name": "Cacahuètes",
+      "category": "Épicerie sèche",
+      "unit": "kg",
+      "unit_price_estimate_mad": 35,
+      "supplier": "Distri Frais Agadir",
+      "source": "site"
+    },
+    {
+      "name": "Riz long (cantonais / sauté)",
+      "category": "Épicerie sèche",
+      "unit": "kg",
+      "unit_price_estimate_mad": 15,
+      "supplier": "Distri Frais Agadir",
+      "source": "site"
+    },
+    {
+      "name": "Sucre",
+      "category": "Épicerie sèche",
+      "unit": "kg",
+      "unit_price_estimate_mad": 8,
+      "supplier": "Distri Frais Agadir",
+      "source": "base"
+    },
+    {
+      "name": "Sel",
+      "category": "Épicerie sèche",
+      "unit": "kg",
+      "unit_price_estimate_mad": 3,
+      "supplier": "Distri Frais Agadir",
+      "source": "base"
+    },
+    {
+      "name": "Huile de friture",
+      "category": "Épicerie sèche",
+      "unit": "L",
+      "unit_price_estimate_mad": 20,
+      "supplier": "Distri Frais Agadir",
+      "source": "base"
+    },
+    {
+      "name": "Soda 33cl",
+      "category": "Boissons",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Distri Boissons Souss",
+      "source": "site"
+    },
+    {
+      "name": "Eau gazeuse 50cl",
+      "category": "Boissons",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 5,
+      "supplier": "Distri Boissons Souss",
+      "source": "site"
+    },
+    {
+      "name": "Capsules Nespresso",
+      "category": "Boissons",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 4,
+      "supplier": "Distri Boissons Souss",
+      "source": "site"
+    }
+  ],
+  "packaging": [
+    {
+      "name": "Plateau sushi noir + couvercle (petit, 12-18 pcs)",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 3.5,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Plateau sushi noir + couvercle (grand, 36-54 pcs)",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 7,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Bol poke kraft 750ml + couvercle",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 3,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Barquette wok/nouilles kraft",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 2.5,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Pot soupe 500ml + couvercle",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 2,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Pot sauce 30ml + couvercle",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 0.35,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Baguettes bambou (paire)",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 0.4,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Sachet sauce soja 8ml",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 0.3,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Sac kraft livraison",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 1.5,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Gobelet jus 400ml + couvercle",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 1.2,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Serviettes papier (paquet 100)",
+      "unit": "paquet",
+      "unit_price_estimate_mad": 8,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Film alimentaire 300m",
+      "unit": "rouleau",
+      "unit_price_estimate_mad": 70,
+      "supplier": "Emballages Pro Maroc"
+    },
+    {
+      "name": "Film bambou makisu (natte)",
+      "unit": "pièce",
+      "unit_price_estimate_mad": 20,
+      "supplier": "Emballages Pro Maroc"
+    }
+  ],
+  "cleaning": [
+    {
+      "name": "Liquide vaisselle 5L",
+      "unit": "bidon",
+      "unit_price_estimate_mad": 45,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Dégraissant cuisine 5L",
+      "unit": "bidon",
+      "unit_price_estimate_mad": 90,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Désinfectant surfaces alimentaire 5L",
+      "unit": "bidon",
+      "unit_price_estimate_mad": 120,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Javel 5L",
+      "unit": "bidon",
+      "unit_price_estimate_mad": 25,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Gants nitrile (boîte 100)",
+      "unit": "boîte",
+      "unit_price_estimate_mad": 60,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Charlottes (paquet 100)",
+      "unit": "paquet",
+      "unit_price_estimate_mad": 30,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Éponges (paquet 10)",
+      "unit": "paquet",
+      "unit_price_estimate_mad": 15,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Sacs poubelle 100L (rouleau)",
+      "unit": "rouleau",
+      "unit_price_estimate_mad": 25,
+      "supplier": "Hygiène Plus"
+    },
+    {
+      "name": "Essuie-tout (lot 6)",
+      "unit": "lot",
+      "unit_price_estimate_mad": 40,
+      "supplier": "Hygiène Plus"
+    }
+  ],
+  "menu": [
+    {
+      "categorie": "Assortiments",
+      "nom": "Big fresh",
+      "prix_mad": 319,
+      "pieces": 50
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Crunchy Break",
+      "prix_mad": 239,
+      "pieces": 36
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Crunchy délice",
+      "prix_mad": 239,
+      "pieces": 28
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Crunchy Family",
+      "prix_mad": 369,
+      "pieces": 52
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Eby Crunchy",
+      "prix_mad": 89,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "L'incontournable",
+      "prix_mad": 329,
+      "pieces": 54
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini California",
+      "prix_mad": 98,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini Détente",
+      "prix_mad": 89,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini Régal",
+      "prix_mad": 95,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini Salmon",
+      "prix_mad": 109,
+      "pieces": 10
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini Trio",
+      "prix_mad": 79,
+      "pieces": 10
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Mini Yummy",
+      "prix_mad": 109,
+      "pieces": 14
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Salmon Fresh",
+      "prix_mad": 169,
+      "pieces": 18
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Sushi Dream",
+      "prix_mad": 229,
+      "pieces": 36
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Sushi Family",
+      "prix_mad": 329,
+      "pieces": 48
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Sushi Plaisir",
+      "prix_mad": 329,
+      "pieces": 48
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Sushi Relax",
+      "prix_mad": 249,
+      "pieces": 34
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Sushi Symphonie",
+      "prix_mad": 219,
+      "pieces": 28
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Symphonie Royale",
+      "prix_mad": 329,
+      "pieces": 32
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka California",
+      "prix_mad": 109,
+      "pieces": 16
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Crunchy",
+      "prix_mad": 159,
+      "pieces": 20
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Délice",
+      "prix_mad": 99,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Dragon",
+      "prix_mad": 119,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Fresh",
+      "prix_mad": 129,
+      "pieces": 20
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Fry",
+      "prix_mad": 99,
+      "pieces": 12
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Mix",
+      "prix_mad": 169,
+      "pieces": 24
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Nori",
+      "prix_mad": 159,
+      "pieces": 24
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Party",
+      "prix_mad": 159,
+      "pieces": 24
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Slim",
+      "prix_mad": 224,
+      "pieces": 32
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Spring",
+      "prix_mad": 139,
+      "pieces": 18
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Tasty",
+      "prix_mad": 129,
+      "pieces": 18
+    },
+    {
+      "categorie": "Assortiments",
+      "nom": "Waka Zen",
+      "prix_mad": 159,
+      "pieces": 16
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Crunchy",
+      "prix_mad": 109,
+      "pieces": 10
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Délice",
+      "prix_mad": 99
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Douceur",
+      "prix_mad": 125,
+      "pieces": 14
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Eby",
+      "prix_mad": 115
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Fraîcheur",
+      "prix_mad": 115
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Lighter",
+      "prix_mad": 149,
+      "pieces": 16
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Mix",
+      "prix_mad": 119
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Mushy",
+      "prix_mad": 99
+    },
+    {
+      "categorie": "Bentos",
+      "nom": "Bento Régal",
+      "prix_mad": 115
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Agra",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Bombay",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Bora Bora",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Boston",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Cheesy",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Classique",
+      "prix_mad": 29
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crabe Mangue Spring",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crabe Spring",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crème cheese",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crevette Crabe Rouleau de Printemps",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crevette Rouleau de Printemps",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crevette Spring",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Kachiwa",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Maki Crabe",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Maki Saumon",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Maki Spécial",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Maki Surimi",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Nagoya",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Nara",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Yatomi",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crispy Yokohama",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crunchy Anguille",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crunchy Crevette",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crunchy Saumon",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Crunchy Surimi",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Denver",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Dragon Eye",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Ebi Fry",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Fresno",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Fry Ebi Fry",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Green",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Los Angeles",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Malmo",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Moscow",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Nairobi",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Napoli",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Natan",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "New Delhi",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "New Jersey",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "New York",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Norvégien",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Oklahoma",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Omaha",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Oslo",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Rainbow",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Rio",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "San Francisco",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "San José",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon Avocat",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon Crevette Rouleau de Printemps",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon Crunch",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon épicé Spring",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon fumé Crabe Rouleau de Printemps",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Saumon Rouleau de Printemps",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Shishimi",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Slim Crevette",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Slim Exotique",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Super Cheesy Crunchy",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Thon Avocat",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Tiger Roll",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Tokyo",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Tucson",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Vegas",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Veggie",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Rolls",
+      "nom": "Washington",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Crispy rice anguille",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Crispy rice crabe",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Crispy rice saumon",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Sushi nem eby",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Tacos Crabe",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Tacos Crevettes",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Tacos Mix",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Crispy Rice",
+      "nom": "Tacos Saumon",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Sushi Pizza",
+      "nom": "Crevette Mozza",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Sushi Pizza",
+      "nom": "Saumon Anguille",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Sushi Pizza",
+      "nom": "Saumon Avocat",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Sushi Pizza",
+      "nom": "Saumon Crabe",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Sushi Pizza",
+      "nom": "Saumon Mozza",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Bangkok",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Hot-eel",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Krabi",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Pattaya",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Spicy Salmon",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Tangy",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Premium",
+      "nom": "Yala",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Futomakis",
+      "nom": "Ebi Futomaki",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Futomakis",
+      "nom": "Manguo Futomaki",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Futomakis",
+      "nom": "Salmon Ebi Futomaki",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Futomakis",
+      "nom": "Spécial Futomaki",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Bouchée Vapeur Crevette",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Calamar grillé sauce thaï",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Crevette sweet & sour",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Crevettes grillées sauce thaï",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Crevettes Tempura",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Nems crevette",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Nems Poulet",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Poulet grillé sauce thaï",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Poulet karaage",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Poulet sweet & sour",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Tapas",
+      "nom": "Saumon sweet & sour",
+      "prix_mad": 69
+    },
+    {
+      "categorie": "Poke Bowl",
+      "nom": "Crabe",
+      "prix_mad": 109
+    },
+    {
+      "categorie": "Poke Bowl",
+      "nom": "Crevette",
+      "prix_mad": 85
+    },
+    {
+      "categorie": "Poke Bowl",
+      "nom": "Mix",
+      "prix_mad": 129
+    },
+    {
+      "categorie": "Poke Bowl",
+      "nom": "Poulet",
+      "prix_mad": 75
+    },
+    {
+      "categorie": "Poke Bowl",
+      "nom": "Saumon",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Bœuf Yam nua",
+      "prix_mad": 69
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Carpaccio saint-jacques",
+      "prix_mad": 99
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Crevette à la Vietnamienne",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Crispy Crevette",
+      "prix_mad": 59
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Poulet à la Vietnamienne",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Sea Food Symphonie",
+      "prix_mad": 85
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Thaï Gambas",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Salades",
+      "nom": "Waka Cheesy",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Sea food symphonie",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok bœuf basilic",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok bœuf gingembre",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok Gambas Brocolis",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok Gambas noix de cajou",
+      "prix_mad": 85
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok poulet gingembre",
+      "prix_mad": 65
+    },
+    {
+      "categorie": "Woks",
+      "nom": "Wok poulet noix de cajou",
+      "prix_mad": 69
+    },
+    {
+      "categorie": "Teppanyaki",
+      "nom": "Black tiger Teppanyaki",
+      "prix_mad": 159
+    },
+    {
+      "categorie": "Teppanyaki",
+      "nom": "Gambas Teppanyaki",
+      "prix_mad": 119
+    },
+    {
+      "categorie": "Teppanyaki",
+      "nom": "Poisson Blanc Teppanyaki",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Teppanyaki",
+      "nom": "Poulet Teppanyaki",
+      "prix_mad": 119
+    },
+    {
+      "categorie": "Teppanyaki",
+      "nom": "Salmon Teppanyaki",
+      "prix_mad": 119
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Bœuf fromage",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Bœuf fromage pané",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Boulettes Poulet",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Brochette crevettes",
+      "prix_mad": 49
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Brochette poulet",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Yaki",
+      "nom": "Brochette saumon",
+      "prix_mad": 44
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Nouilles bœuf",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Nouilles Crevette",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Nouilles Fruits de mer",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Nouilles Poulet",
+      "prix_mad": 70
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Nouilles Végétariennes",
+      "prix_mad": 65
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Riz sauté bœuf",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Riz sauté Crevette",
+      "prix_mad": 75
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Riz sauté Fruits de mer",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Riz sauté poulet",
+      "prix_mad": 75
+    },
+    {
+      "categorie": "Nouilles & Riz sautés",
+      "nom": "Riz sauté Végétarien",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Bœuf Curry rouge",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Bœuf Curry vert",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Bœuf Massaman",
+      "prix_mad": 139
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Cuisse de Poulet Massaman",
+      "prix_mad": 95
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Fruits de mer Curry rouge",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Fruits de Mer Curry vert",
+      "prix_mad": 89
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Pavé de Saumon Massaman",
+      "prix_mad": 149
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Poulet Curry rouge",
+      "prix_mad": 69
+    },
+    {
+      "categorie": "Curry",
+      "nom": "Poulet Curry vert",
+      "prix_mad": 69
+    },
+    {
+      "categorie": "Plats",
+      "nom": "Cuisses de poulet caramélisées",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Plats",
+      "nom": "Cuisses de poulet façon thaï",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Plats",
+      "nom": "Filet de boeuf aux trois champignons",
+      "prix_mad": 149
+    },
+    {
+      "categorie": "Plats",
+      "nom": "Filet de loup façon thaï",
+      "prix_mad": 159
+    },
+    {
+      "categorie": "Plats",
+      "nom": "Pavé de saumon façon thaï",
+      "prix_mad": 149
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Lait de coco crevette",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Lait de coco poulet",
+      "prix_mad": 55
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Miso Crevettes",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Miso Saumon",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Ramen beef",
+      "prix_mad": 85
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Ramen chicken",
+      "prix_mad": 79
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Royale symphonie",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Soupe asiatique",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Soupes",
+      "nom": "Soupe fruits de mer",
+      "prix_mad": 39
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Citron Gingembre",
+      "prix_mad": 29
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Citron ou Citron Menthe",
+      "prix_mad": 24
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Green Detox",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Orange",
+      "prix_mad": 24
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Orange Detox",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Jus",
+      "nom": "Red Detox",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Boissons froides",
+      "nom": "Eau gazeuse",
+      "prix_mad": 14
+    },
+    {
+      "categorie": "Boissons froides",
+      "nom": "Soda",
+      "prix_mad": 15
+    },
+    {
+      "categorie": "Boissons chaudes",
+      "nom": "Nespresso",
+      "prix_mad": 15
+    },
+    {
+      "categorie": "Boissons chaudes",
+      "nom": "Thé japonais",
+      "prix_mad": 34
+    },
+    {
+      "categorie": "Carpaccios",
+      "nom": "Carpaccio saumon",
+      "prix_mad": 70,
+      "pieces": 8
+    },
+    {
+      "categorie": "Carpaccios",
+      "nom": "Carpaccio thon",
+      "prix_mad": 70,
+      "pieces": 8
+    },
+    {
+      "categorie": "Gunkan",
+      "nom": "Gunkan crabe mariné",
+      "prix_mad": 55,
+      "pieces": 2
+    },
+    {
+      "categorie": "Gunkan",
+      "nom": "Gunkan saumon épicé",
+      "prix_mad": 34,
+      "pieces": 2
+    },
+    {
+      "categorie": "Gunkan",
+      "nom": "Gunkan thon épicé",
+      "prix_mad": 39,
+      "pieces": 2
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki avocat",
+      "prix_mad": 19,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki concombre",
+      "prix_mad": 19,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki crabe",
+      "prix_mad": 39,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki crevette",
+      "prix_mad": 25,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki mangue",
+      "prix_mad": 24,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki saumon",
+      "prix_mad": 29,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki saumon-avocat",
+      "prix_mad": 39,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki surimi",
+      "prix_mad": 22,
+      "pieces": 8
+    },
+    {
+      "categorie": "Maki",
+      "nom": "Maki thon",
+      "prix_mad": 34,
+      "pieces": 8
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri anguille",
+      "prix_mad": 39,
+      "pieces": 2
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri ebi",
+      "prix_mad": 29,
+      "pieces": 2
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri saumon",
+      "prix_mad": 29,
+      "pieces": 2
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri saumon-avocat",
+      "prix_mad": 34,
+      "pieces": 2
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri saumon braisé",
+      "prix_mad": 34,
+      "pieces": 2
+    },
+    {
+      "categorie": "Nigiri",
+      "nom": "Nigiri thon",
+      "prix_mad": 34,
+      "pieces": 2
+    },
+    {
+      "categorie": "Sashimis",
+      "nom": "Sashimi saumon",
+      "prix_mad": 50,
+      "pieces": 4
+    },
+    {
+      "categorie": "Sashimis",
+      "nom": "Sashimi thon",
+      "prix_mad": 50,
+      "pieces": 4
+    }
+  ],
+  "compositions_verifiees": {
+    "Oklahoma": [
+      "Crevette panée",
+      "Surimi haché",
+      "Avocat",
+      "Crème cheese",
+      "Tobiko"
+    ],
+    "Crispy Nagoya": [
+      "Crevette",
+      "Surimi",
+      "Crabe",
+      "Crème cheese",
+      "Tobiko"
+    ],
+    "Dragon Eye": [
+      "Saumon",
+      "Carotte",
+      "Poireau",
+      "Tobiko"
+    ],
+    "Crunchy Anguille": [
+      "Anguille panée",
+      "Tobiko",
+      "Crème cheese",
+      "Shichimi"
+    ],
+    "Slim Exotique": [
+      "Surimi",
+      "Wakamé",
+      "Mangue",
+      "Tobiko"
+    ],
+    "Mix (Poke Bowl)": [
+      "Crevette panée",
+      "Saumon",
+      "Crabe",
+      "Avocat",
+      "Surimi",
+      "Mangue",
+      "Goma wakame",
+      "Tobiko",
+      "Noix de cajou"
+    ],
+    "Bangkok": [
+      "Saumon cuit mariné",
+      "Crevette panée",
+      "Anguille",
+      "Crabe",
+      "Crème cheese",
+      "Tobiko"
+    ],
+    "Wok Gambas noix de cajou": [
+      "Gambas",
+      "Carotte",
+      "Poivron vert",
+      "Poivron jaune",
+      "Poivron rouge",
+      "Oignon",
+      "Poireau",
+      "Noix de cajou",
+      "Big sauce"
+    ],
+    "Sea food symphonie (Wok)": [
+      "Gambas",
+      "Calamar",
+      "Poulpe",
+      "Saumon",
+      "Poisson blanc",
+      "Poivron vert",
+      "Poivron jaune",
+      "Poivron rouge",
+      "Oignon",
+      "Poireau",
+      "Big sauce"
+    ],
+    "Bœuf Massaman": [
+      "Bœuf",
+      "Lait de coco",
+      "Pâte de curry massaman",
+      "Pomme de terre",
+      "Échalotes",
+      "Cacahuète"
+    ],
+    "Ramen beef": [
+      "Nouilles",
+      "Bœuf",
+      "Œufs",
+      "Brocoli",
+      "Germes de soja",
+      "Shiitake",
+      "Poireau",
+      "Ciboulette"
+    ],
+    "Tacos Mix": [
+      "Crevette pochée",
+      "Saumon mariné",
+      "Crabe",
+      "Goma wakame",
+      "Tobiko",
+      "Guacamole"
+    ],
+    "Salmon Teppanyaki": [
+      "Saumon",
+      "Brocoli",
+      "Chou-fleur",
+      "Carotte",
+      "Haricot vert",
+      "Riz cantonais",
+      "Japan sauce"
+    ],
+    "Bœuf Yam nua": [
+      "Bœuf mariné",
+      "Échalotes",
+      "Poireaux",
+      "Concombre",
+      "Tomate cerise",
+      "Coriandre",
+      "Menthe",
+      "Chou",
+      "Sauce yam nua"
+    ],
+    "Saumon Mozza (Sushi Pizza)": [
+      "Saumon",
+      "Avocat",
+      "Tobiko",
+      "Mozzarella"
+    ],
+    "Green Detox": [
+      "Concombre",
+      "Citron",
+      "Menthe"
+    ],
+    "Big fresh (plateau 50 pcs)": [
+      "4 California saumon avocat",
+      "4 California classique",
+      "4 Oklahoma",
+      "4 Tucson",
+      "4 California ebi fry",
+      "4 Natane",
+      "4 Chicago",
+      "4 California crème cheese",
+      "8 Maki saumon avocat",
+      "8 Spring crevette",
+      "2 Nigiri ebi"
+    ]
+  }
+}

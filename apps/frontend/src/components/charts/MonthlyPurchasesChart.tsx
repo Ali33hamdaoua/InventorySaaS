@@ -8,22 +8,22 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { MonthlyPurchasesPoint } from '@inventorymdb/shared';
+import { BRAND_COLORS, primaryAlpha } from '@/lib/brand';
+import { CURRENCY } from '@/lib/brand';
 
 interface Props {
   data: MonthlyPurchasesPoint[];
 }
 
-/** Compact CAD axis tick formatter — keeps the Y-axis narrow for big amounts. */
-const axisCadCompact = new Intl.NumberFormat('fr-CA', {
-  style: 'currency',
-  currency: 'CAD',
+/** Compact axis tick formatter — keeps the Y-axis narrow for big amounts. */
+const axisCompact = new Intl.NumberFormat(CURRENCY.locale, {
   notation: 'compact',
   maximumFractionDigits: 1,
 });
 
-const tooltipCad = new Intl.NumberFormat('fr-CA', {
-  style: 'currency',
-  currency: 'CAD',
+const tooltipAmount = new Intl.NumberFormat(CURRENCY.locale, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 });
 
 export function MonthlyPurchasesChart({ data }: Props) {
@@ -43,10 +43,10 @@ export function MonthlyPurchasesChart({ data }: Props) {
           tickLine={false}
           axisLine={false}
           width={64}
-          tickFormatter={(v: number) => axisCadCompact.format(v)}
+          tickFormatter={(v: number) => `${axisCompact.format(v)} ${CURRENCY.symbol}`}
         />
         <Tooltip
-          cursor={{ fill: 'rgba(237,49,46,0.08)' }}
+          cursor={{ fill: primaryAlpha(0.08) }}
           contentStyle={{
             background: '#1a1a1a',
             border: '1px solid rgba(255,255,255,0.08)',
@@ -54,9 +54,9 @@ export function MonthlyPurchasesChart({ data }: Props) {
             color: '#FAF8F5',
             fontSize: 12,
           }}
-          formatter={(v: number) => [tooltipCad.format(v), 'Achats']}
+          formatter={(v: number) => [`${tooltipAmount.format(v)} ${CURRENCY.symbol}`, 'Achats']}
         />
-        <Bar dataKey="total" fill="#ED312E" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="total" fill={BRAND_COLORS.primary} radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

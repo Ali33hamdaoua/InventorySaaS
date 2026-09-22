@@ -11,6 +11,7 @@ import type {
   ProductImportSummary,
 } from '@inventorymdb/shared';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { BRAND_NAME, APP_NAME, BRAND_PRIMARY_ARGB } from '../../common/config/brand';
 
 const ALLOWED_UNITS = ['kg', 'g', 'L', 'ml', 'unit', 'box', 'pack', 'bag'] as const;
 
@@ -35,8 +36,8 @@ export class ProductsImportService {
 
   async buildTemplate(): Promise<Buffer> {
     const wb = new ExcelJS.Workbook();
-    wb.creator = 'Inventory MDB';
-    wb.company = 'La Maison du Burger';
+    wb.creator = APP_NAME;
+    wb.company = BRAND_NAME;
     wb.created = new Date();
 
     // ----------- Sheet 1: Instructions
@@ -45,10 +46,10 @@ export class ProductsImportService {
     inst.mergeCells('B1:C1');
     const title = inst.getCell('B1');
     title.value = 'Template d\'import — Produits d\'inventaire';
-    title.font = { bold: true, size: 16, color: { argb: 'FFED312E' } };
+    title.font = { bold: true, size: 16, color: { argb: BRAND_PRIMARY_ARGB } };
 
     inst.mergeCells('B2:C2');
-    inst.getCell('B2').value = 'La Maison du Burger — Inventory MDB';
+    inst.getCell('B2').value = `${BRAND_NAME} — ${APP_NAME}`;
     inst.getCell('B2').font = { italic: true, color: { argb: 'FF888888' } };
 
     const rules: Array<[string, string]> = [
@@ -66,7 +67,7 @@ export class ProductsImportService {
       const cell1 = inst.getCell(`B${r}`);
       const cell2 = inst.getCell(`C${r}`);
       cell1.value = k;
-      cell1.font = { bold: true, color: { argb: 'FFED312E' } };
+      cell1.font = { bold: true, color: { argb: BRAND_PRIMARY_ARGB } };
       cell1.alignment = { vertical: 'top' };
       cell2.value = v;
       cell2.alignment = { wrapText: true, vertical: 'top' };
@@ -80,7 +81,7 @@ export class ProductsImportService {
       const cell = headerRow.getCell(idx + 1);
       cell.value = c.header;
       cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFED312E' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_PRIMARY_ARGB } };
       cell.alignment = { vertical: 'middle', horizontal: 'left' };
       ws.getColumn(idx + 1).width = c.width;
     });
@@ -103,7 +104,7 @@ export class ProductsImportService {
     const lists = wb.addWorksheet('Listes');
     lists.columns = [{ header: 'Unités acceptées', width: 24 }];
     lists.getCell('A1').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    lists.getCell('A1').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFED312E' } };
+    lists.getCell('A1').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_PRIMARY_ARGB } };
     ALLOWED_UNITS.forEach((u, i) => {
       lists.getCell(`A${i + 2}`).value = u;
     });

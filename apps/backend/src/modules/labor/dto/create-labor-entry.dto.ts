@@ -35,7 +35,7 @@ export class CreateLaborEntryDto {
   @Min(0)
   hours!: number;
 
-  @ApiProperty({ description: 'Taux horaire en CAD' })
+  @ApiProperty({ description: 'Taux horaire dans la devise du client' })
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { currency } from '@/lib/utils';
+import { CHART_PALETTE } from '@/lib/brand';
 
 interface Props {
   title: string;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 // Maison Burger palette with warm accent tones.
-const COLORS = ['#ED312E', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+const COLORS = CHART_PALETTE;
 
 export function CategoryDonutCard({
   title,

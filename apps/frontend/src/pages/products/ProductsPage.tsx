@@ -32,6 +32,7 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useActiveBranch } from '@/hooks/useActiveBranch';
 import { useAuthStore } from '@/stores/auth.store';
 import { canAccessAllBranches } from '@inventorymdb/shared';
+import { BRAND } from '@/lib/brand';
 
 const PAGE_SIZES = [10, 25, 50, 100] as const;
 
@@ -162,7 +163,7 @@ export default function ProductsPage() {
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">Produits d'inventaire</h1>
           <p className="text-sm text-muted-foreground">
-            Gérez les ingrédients, emballages et consommables. Les produits seed La Maison du Burger
+            Gérez les ingrédients, emballages et consommables. Les produits seed {BRAND.name}{' '}
             restent modifiables pour la démo.
           </p>
         </div>

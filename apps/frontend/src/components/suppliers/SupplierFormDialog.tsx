@@ -20,6 +20,7 @@ import {
   type Supplier,
   type SupplierPayload,
 } from '@/services/suppliers.service';
+import { BRAND } from '@/lib/brand';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Nom requis (min 2 caractères)').max(150),
@@ -114,7 +115,7 @@ export function SupplierFormDialog({ open, onOpenChange, supplier }: Props) {
           <DialogTitle>{isEdit ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Mettez à jour les informations du fournisseur. Les seeds La Maison du Burger restent modifiables.'
+              ? `Mettez à jour les informations du fournisseur. Les seeds ${BRAND.name} restent modifiables.`
               : 'Ajoutez un fournisseur. Il sera disponible dynamiquement dans la section Achats.'}
           </DialogDescription>
         </DialogHeader>
@@ -157,7 +158,7 @@ export function SupplierFormDialog({ open, onOpenChange, supplier }: Props) {
               <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-border/60 bg-background px-3 text-sm">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 accent-[#ED312E]"
+                  className="h-4 w-4 accent-[hsl(var(--primary))]"
                   {...form.register('isActive')}
                 />
                 Fournisseur actif

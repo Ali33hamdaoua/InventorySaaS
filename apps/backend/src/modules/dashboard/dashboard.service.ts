@@ -7,6 +7,7 @@ import {
   monthEndExclusiveUTC,
 } from '../../common/helpers/business-date.helper';
 import { computeConsumptionQuantity } from '../../common/helpers/inventory-math.helper';
+import { CURRENCY_SYMBOL, LOCALE } from '../../common/config/brand';
 
 export type RecommendedActionSeverity = 'info' | 'warning' | 'success';
 
@@ -173,7 +174,7 @@ export class DashboardService {
 
   async getKpiForPeriod(periodId?: string, branchId?: string) {
     const period = await this.resolvePeriod(periodId, branchId);
-    if (!period) throw new NotFoundException('Aucune pÃ©riode trouvÃ©e');
+    if (!period) throw new NotFoundException('Aucune période trouvée');
     return this.computeSnapshot(period);
   }
 
@@ -276,7 +277,7 @@ export class DashboardService {
     let total = 0;
     for (const l of lines) {
       const id = l.product.categoryId ?? 'none';
-      const name = l.product.category?.name ?? 'Non catÃ©gorisÃ©';
+      const name = l.product.category?.name ?? 'Non catégorisé';
       const v = this.estimateConsumption(l).value;
       if (v <= 0) continue;
       total += v;
@@ -421,37 +422,34 @@ export class DashboardService {
     },
     flags: { hasSalesRevenue: boolean; hasCriticalProducts: boolean },
   ): string {
-    const fmt = new Intl.NumberFormat('fr-CA', {
-      style: 'currency',
-      currency: 'CAD',
-      maximumFractionDigits: 0,
-    });
-    const realCostStr = fmt.format(current.realCost);
-    const purchasesStr = fmt.format(current.purchasesValue);
+    const fmt = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
+    const money = (n: number) => `${fmt.format(n)} ${CURRENCY_SYMBOL}`;
+    const realCostStr = money(current.realCost);
+    const purchasesStr = money(current.purchasesValue);
 
     const parts: string[] = [];
     parts.push(
-      `Ce mois-ci, vos achats reprÃ©sentent ${purchasesStr} et votre consommation rÃ©elle est de ${realCostStr}.`,
+      `Ce mois-ci, vos achats représentent ${purchasesStr} et votre consommation réelle est de ${realCostStr}.`,
     );
 
     if (flags.hasSalesRevenue && current.foodCostPercentage !== null) {
       const pct = current.foodCostPercentage.toFixed(1);
       const verdict =
         current.foodCostPercentage > 33
-          ? ` C'est au-dessus de la cible de 30 % â€” analysez les produits les plus coÃ»teux.`
+          ? ` C'est au-dessus de la cible de 30 % â€” analysez les produits les plus coûteux.`
           : current.foodCostPercentage > 30
-            ? ` Vous Ãªtes lÃ©gÃ¨rement au-dessus de l'objectif de 30 %.`
-            : ` Vous Ãªtes dans la fourchette saine (â‰¤ 30 %).`;
+            ? ` Vous êtes légèrement au-dessus de l'objectif de 30 %.`
+            : ` Vous êtes dans la fourchette saine (â‰¤ 30 %).`;
       parts.push(`Le food cost est de ${pct} %.${verdict}`);
     } else {
       parts.push(
-        `Le food cost % n'est pas calculÃ© : renseignez le chiffre d'affaires pour l'obtenir.`,
+        `Le food cost % n'est pas calculé : renseignez le chiffre d'affaires pour l'obtenir.`,
       );
     }
 
     if (variation.realCostPct !== null) {
       const sign = variation.realCostPct >= 0 ? '+' : '';
-      parts.push(`Variation du cost rÃ©el vs mois prÃ©cÃ©dent : ${sign}${variation.realCostPct.toFixed(1)} %.`);
+      parts.push(`Variation du cost réel vs mois précédent : ${sign}${variation.realCostPct.toFixed(1)} %.`);
     }
 
     if (flags.hasCriticalProducts) {
@@ -478,9 +476,9 @@ export class DashboardService {
     if (period.status === PeriodStatus.OPEN && !flags.hasOpeningData) {
       actions.push({
         id: 'enter-opening',
-        title: 'Saisir le dÃ©but d\'inventaire',
+        title: 'Saisir le début d\'inventaire',
         description:
-          'Aucune quantitÃ© de dÃ©but n\'est enregistrÃ©e. Saisissez-les pour calculer le cost rÃ©el.',
+          'Aucune quantité de début n\'est enregistrée. Saisissez-les pour calculer le cost réel.',
         severity: 'warning',
         ctaPath: `/inventory/${period.id}`,
         ctaLabel: 'Saisir',
@@ -492,10 +490,10 @@ export class DashboardService {
         id: 'enter-closing',
         title: 'Saisir la fin d\'inventaire',
         description:
-          'Les quantitÃ©s de fin de pÃ©riode ne sont pas encore renseignÃ©es. Saisissez-les pour clÃ´turer.',
+          'Les quantités de fin de période ne sont pas encore renseignées. Saisissez-les pour clôturer.',
         severity: 'info',
         ctaPath: `/inventory/${period.id}`,
-        ctaLabel: 'ComplÃ©ter',
+        ctaLabel: 'Compléter',
       });
     }
 
@@ -503,7 +501,7 @@ export class DashboardService {
       actions.push({
         id: 'add-purchases',
         title: 'Ajouter les achats du mois',
-        description: 'Aucun achat enregistrÃ© ce mois. Ajoutez-les pour calculer la consommation.',
+        description: 'Aucun achat enregistré ce mois. Ajoutez-les pour calculer la consommation.',
         severity: 'info',
         ctaPath: '/purchases',
         ctaLabel: 'Ajouter un achat',
@@ -513,9 +511,9 @@ export class DashboardService {
     if (flags.hasCriticalProducts) {
       actions.push({
         id: 'check-critical',
-        title: 'VÃ©rifier les produits critiques',
+        title: 'Vérifier les produits critiques',
         description:
-          'Certains produits sont sous le seuil de stock minimal. Lancez les commandes nÃ©cessaires.',
+          'Certains produits sont sous le seuil de stock minimal. Lancez les commandes nécessaires.',
         severity: 'warning',
         ctaPath: '/inventory',
         ctaLabel: 'Voir la liste',
@@ -525,9 +523,9 @@ export class DashboardService {
     if (current.foodCostPercentage !== null && current.foodCostPercentage > 33) {
       actions.push({
         id: 'analyze-top-cost',
-        title: 'Analyser les catÃ©gories les plus coÃ»teuses',
+        title: 'Analyser les catégories les plus coûteuses',
         description:
-          'Votre food cost dÃ©passe 33 %. VÃ©rifiez les viandes, fromages et sauces â€” souvent les plus impactants.',
+          'Votre food cost dépasse 33 %. Vérifiez les viandes, fromages et sauces â€” souvent les plus impactants.',
         severity: 'warning',
         ctaPath: `/inventory/${period.id}`,
         ctaLabel: "Voir l'inventaire",
@@ -542,27 +540,27 @@ export class DashboardService {
           'Saisissez le CA mensuel pour activer le calcul automatique du food cost %.',
         severity: 'info',
         ctaPath: `/inventory/${period.id}`,
-        ctaLabel: 'ComplÃ©ter',
+        ctaLabel: 'Compléter',
       });
     }
 
     if (flags.canClose) {
       actions.push({
         id: 'close-period',
-        title: 'ClÃ´turer la pÃ©riode',
+        title: 'Clôturer la période',
         description:
-          'Toutes les donnÃ©es nÃ©cessaires sont saisies. ClÃ´turez pour gÃ©nÃ©rer le rapport mensuel.',
+          'Toutes les données nécessaires sont saisies. Clôturez pour générer le rapport mensuel.',
         severity: 'success',
         ctaPath: `/inventory/${period.id}`,
-        ctaLabel: 'ClÃ´turer',
+        ctaLabel: 'Clôturer',
       });
     }
 
     if (actions.length === 0) {
       actions.push({
         id: 'all-good',
-        title: 'DonnÃ©es Ã  jour',
-        description: 'Aucune action urgente. Suivez l\'Ã©volution dans le graphique food cost.',
+        title: 'Données à jour',
+        description: 'Aucune action urgente. Suivez l\'évolution dans le graphique food cost.',
         severity: 'success',
       });
     }
@@ -600,15 +598,15 @@ export class DashboardService {
         canClose: false,
       },
       businessSummary:
-        'Aucune pÃ©riode n\'a encore Ã©tÃ© crÃ©Ã©e. CrÃ©ez la pÃ©riode courante pour commencer le suivi.',
+        'Aucune période n\'a encore été créée. Créez la période courante pour commencer le suivi.',
       recommendedActions: [
         {
           id: 'create-period',
-          title: 'CrÃ©er la pÃ©riode courante',
-          description: 'Initialisez la pÃ©riode mensuelle pour saisir l\'inventaire et les achats.',
+          title: 'Créer la période courante',
+          description: 'Initialisez la période mensuelle pour saisir l\'inventaire et les achats.',
           severity: 'warning' as const,
           ctaPath: '/inventory',
-          ctaLabel: 'CrÃ©er une pÃ©riode',
+          ctaLabel: 'Créer une période',
         },
       ],
       trend: [],
@@ -660,7 +658,7 @@ export class DashboardService {
       const p = byId.get(g.productId);
       return {
         productId: g.productId,
-        productName: p?.name ?? '(supprimÃ©)',
+        productName: p?.name ?? '(supprimé)',
         categoryName: p?.category?.name ?? null,
         unit: p?.unit ?? '',
         quantityPurchased: g._sum.quantity?.toNumber() ?? 0,

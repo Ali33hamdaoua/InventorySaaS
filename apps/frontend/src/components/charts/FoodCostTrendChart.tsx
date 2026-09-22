@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { FoodCostTrendPoint } from '@inventorymdb/shared';
+import { BRAND_COLORS } from '@/lib/brand';
 
 interface Props {
   data: FoodCostTrendPoint[];
@@ -44,10 +45,10 @@ export function FoodCostTrendChart({ data }: Props) {
         <Line
           type="monotone"
           dataKey="pct"
-          stroke="#ED312E"
+          stroke={BRAND_COLORS.primary}
           strokeWidth={2.5}
-          dot={{ r: 4, fill: '#ED312E', strokeWidth: 0 }}
-          activeDot={{ r: 6, fill: '#ED312E', stroke: '#fff', strokeWidth: 2 }}
+          dot={{ r: 4, fill: BRAND_COLORS.primary, strokeWidth: 0 }}
+          activeDot={{ r: 6, fill: BRAND_COLORS.primary, stroke: '#fff', strokeWidth: 2 }}
         />
       </LineChart>
     </ResponsiveContainer>

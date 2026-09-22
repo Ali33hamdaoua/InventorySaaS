@@ -53,7 +53,7 @@ export class ListProductsDto {
   isActive?: string;
 
   @ApiPropertyOptional({
-    description: 'Filtre sur les produits dont minStockLevel > 0 (utile combinÃ© cÃ´tÃ© UI avec le dashboard)',
+    description: 'Filtre sur les produits dont minStockLevel > 0 (utile combiné côté UI avec le dashboard)',
   })
   @IsOptional()
   @IsBooleanString()

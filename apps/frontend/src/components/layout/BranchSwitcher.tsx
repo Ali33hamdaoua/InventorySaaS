@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useActiveBranch } from '@/hooks/useActiveBranch';
 import { useBranchStore } from '@/stores/branch.store';
 import { cn } from '@/lib/utils';
+import { BRAND } from '@/lib/brand';
 
 export function BranchSwitcher() {
   const { branch, branches, isLoading, isError } = useActiveBranch();
@@ -43,8 +44,8 @@ export function BranchSwitcher() {
         <button
           type="button"
           className={cn(
-            'group inline-flex items-center gap-2 rounded-md border border-border/60 bg-[#1f1f1f] px-3 py-1.5 text-xs transition-colors',
-            'hover:border-primary/40 hover:bg-[#262626]',
+            'group inline-flex items-center gap-2 rounded-md border border-border/60 bg-secondary px-3 py-1.5 text-xs transition-colors',
+            'hover:border-primary/40 hover:bg-muted',
           )}
           aria-label="Changer de succursale"
         >
@@ -58,7 +59,7 @@ export function BranchSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          La Maison du Burger · sites
+          {BRAND.name} · sites
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {branches.map((b) => {

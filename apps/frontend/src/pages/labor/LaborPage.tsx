@@ -38,6 +38,7 @@ import {
   todayInputValue,
   toNumber,
 } from '@/lib/utils';
+import { CURRENCY } from '@/lib/brand';
 
 const NOW = new Date();
 const YEAR_OPTIONS = [NOW.getFullYear() - 1, NOW.getFullYear(), NOW.getFullYear() + 1];
@@ -431,7 +432,7 @@ export default function LaborPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="lab-rate">Taux horaire (CAD)</Label>
+              <Label htmlFor="lab-rate">Taux horaire ({CURRENCY.code})</Label>
               <Input
                 id="lab-rate"
                 type="text"

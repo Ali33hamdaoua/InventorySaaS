@@ -27,6 +27,7 @@ import {
   fmtPct,
   renderPdfFromHtml,
 } from './exports.helpers';
+import { BRAND_NAME, APP_NAME, BRAND_PRIMARY_COLOR, BRAND_PRIMARY_ARGB, exportFooter } from '../../common/config/brand';
 
 type Format = 'excel' | 'pdf';
 
@@ -794,8 +795,8 @@ export class ExportsService {
     const branchLabel = period.branch?.name ?? '—';
 
     const wb = new ExcelJS.Workbook();
-    wb.creator = 'Inventory MDB';
-    wb.company = 'La Maison du Burger';
+    wb.creator = APP_NAME;
+    wb.company = BRAND_NAME;
     wb.created = new Date();
     const ws = wb.addWorksheet('Comptage');
 
@@ -820,7 +821,7 @@ export class ExportsService {
     ws.mergeCells('A1:E1');
     const titleCell = ws.getCell('A1');
     titleCell.value = 'Modèle de comptage inventaire';
-    titleCell.font = { bold: true, size: 16, color: { argb: 'FFED312E' } };
+    titleCell.font = { bold: true, size: 16, color: { argb: BRAND_PRIMARY_ARGB } };
     titleCell.alignment = { vertical: 'middle' };
     ws.getRow(1).height = 26;
 
@@ -841,7 +842,7 @@ export class ExportsService {
       const cell = ws.getRow(headerRowNum).getCell(idx + 1);
       cell.value = h;
       cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFED312E' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_PRIMARY_ARGB } };
       cell.alignment = { vertical: 'middle', horizontal: idx < 2 ? 'left' : 'center' };
       cell.border = {
         bottom: { style: 'thin', color: { argb: 'FFAAAAAA' } },
@@ -1093,8 +1094,8 @@ export class ExportsService {
     monthLabel: string,
   ): Promise<Buffer> {
     const wb = new ExcelJS.Workbook();
-    wb.creator = 'Inventory MDB';
-    wb.company = 'La Maison du Burger';
+    wb.creator = APP_NAME;
+    wb.company = BRAND_NAME;
     wb.created = new Date();
 
     // ----- Sheet 1: Summary -----
@@ -1177,16 +1178,16 @@ export class ExportsService {
 <html lang="fr"><head><meta charset="utf-8"/>
 <style>
   body { font-family: 'Segoe UI', system-ui, sans-serif; color: #111; font-size: 11px; }
-  h1 { color: #ED312E; margin: 0 0 4px; font-size: 22px; }
+  h1 { color: ${BRAND_PRIMARY_COLOR}; margin: 0 0 4px; font-size: 22px; }
   .sub { color: #666; margin-bottom: 14px; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
   .kpi { border: 1px solid #ddd; border-radius: 6px; padding: 10px; }
   .kpi .lbl { color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; }
   .kpi .val { font-size: 16px; font-weight: 700; margin-top: 4px; }
-  h2 { font-size: 13px; margin: 18px 0 6px; border-bottom: 1px solid #ED312E; padding-bottom: 4px; }
+  h2 { font-size: 13px; margin: 18px 0 6px; border-bottom: 1px solid ${BRAND_PRIMARY_COLOR}; padding-bottom: 4px; }
   table { width: 100%; border-collapse: collapse; }
   td, th { padding: 4px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
-  th { background: #ED312E; color: #fff; text-align: left; font-weight: 600; }
+  th { background: ${BRAND_PRIMARY_COLOR}; color: #fff; text-align: left; font-weight: 600; }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   .src { color: #888; font-size: 10px; }
   .total td { font-weight: 700; border-top: 2px solid #111; border-bottom: none; padding-top: 6px; }
@@ -1229,7 +1230,7 @@ export class ExportsService {
 
   ${r.notes ? `<h2>Notes</h2><div>${escapeHtml(r.notes)}</div>` : ''}
 
-  <footer>Généré le ${fmtDate(new Date())} — Inventory MDB · La Maison du Burger</footer>
+  <footer>${exportFooter(fmtDate(new Date()))}</footer>
 </body></html>`;
     return renderPdfFromHtml(html);
   }
@@ -1260,7 +1261,7 @@ function addTitle(ws: ExcelJS.Worksheet, text: string, mergeRange: string) {
   ws.mergeCells(mergeRange);
   const c = ws.getCell(mergeRange.split(':')[0]!);
   c.value = text;
-  c.font = { bold: true, size: 14, color: { argb: 'FFED312E' } };
+  c.font = { bold: true, size: 14, color: { argb: BRAND_PRIMARY_ARGB } };
 }
 
 function addKpi(ws: ExcelJS.Worksheet, row: number, label: string, value: number, suffix = '$') {

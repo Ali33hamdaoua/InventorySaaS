@@ -1,12 +1,14 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { CategoryCostBreakdown } from '@inventorymdb/shared';
+import { CHART_PALETTE } from '@/lib/brand';
+import { currency } from '@/lib/utils';
 
 interface Props {
   data: CategoryCostBreakdown[];
 }
 
 // Maison Burger palette — primary red + warm accent tones
-const COLORS = ['#ED312E', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+const COLORS = CHART_PALETTE;
 
 export function CategoryBreakdownChart({ data }: Props) {
   return (
@@ -37,7 +39,7 @@ export function CategoryBreakdownChart({ data }: Props) {
             fontSize: 12,
           }}
           formatter={(v: number, name: string) => [
-            new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(v),
+            currency.format(v),
             name,
           ]}
         />
