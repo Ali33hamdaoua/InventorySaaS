@@ -1,0 +1,738 @@
+// =====================================================================
+// Inventory MDB — Prisma schema
+// Global inventory & food cost control (V1 : no branch separation)
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------
+
+enum UserRole {
+  OWNER
+  MANAGER
+  ADMIN
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  CLOSE_PERIOD
+  /// Réouverture d'une période clôturée — traçable dans l'audit log pour
+  /// que le rollback / la relecture de l'historique fonctionne. Owner/Admin
+  /// seulement (contrôlé par la permission BYPASS_CLOSED_PERIOD).
+  REOPEN_PERIOD
+  EXPORT
+  STOCK_TRANSFER
+  REVERSE_TRANSFER
+}
+
+enum StockTransferStatus {
+  COMPLETED
+  REVERSED
+}
+
+enum CategoryType {
+  FOOD
+  // V1 binary type. Kept for backwards-compat with existing rows that may
+  // still hold this value. New rows should use FOOD / PAPIERS / NETTOYAGE.
+  NON_FOOD
+  PAPIERS
+  NETTOYAGE
+}
+
+enum ExpenseCategory {
+  ELECTRICITE
+  LOYER
+  INTERNET_TELEPHONE
+  ACHATS_FOURNISSEURS
+  EMBALLAGES
+  NETTOYAGE
+  MAINTENANCE
+  MARKETING
+  FRAIS_BANCAIRES
+  PLATEFORMES_LIVRAISON
+  // Auto-synced from the Labor module. Excluded from the financial report's
+  // expense bucket because labor is already counted as its own line item.
+  MAIN_DOEUVRE
+  AUTRES
+}
+
+enum PaymentMethod {
+  VIREMENT
+  CARTE
+  ESPECES
+  CHEQUE
+  PRELEVEMENT
+  AUTRE
+}
+
+/// Status of a monthly financial report.
+/// DRAFT  — live calculation, values are recomputed on every read.
+/// LOCKED — snapshot frozen; the report is read from `snapshot*` columns and
+///          stays stable even if AccountingExpense / inventory data changes.
+enum FinancialReportStatus {
+  DRAFT
+  LOCKED
+}
+
+/// Origin of an AccountingExpense row.
+///   MANUAL   — created via the Accounting page form.
+///   PURCHASE — auto-generated 1-to-1 from a Purchase when the Purchase is
+///              created/updated. The whole purchase becomes a single
+///              accounting row (header totals — HT/TPS/TVQ). Not editable
+///              in Accounting; modify the source Purchase to change values.
+enum AccountingSourceType {
+  MANUAL
+  PURCHASE
+  // Auto-mirror of a LaborEntry (1-to-1). The row is created/updated/deleted
+  // by the Labor module's transaction. Not editable from the Accounting UI
+  // (except notes) — the source LaborEntry is the truth.
+  LABOR
+  // Auto-mirror of a RepairEntry (1-to-1). Same rules as LABOR.
+  REPAIR
+  // Auto-mirror of a PurchaseAdditionalCost (essence / livraison / péage /
+  // manutention / transport / chaîne du froid / douane / autre). One
+  // accounting row per additional cost line on the parent Purchase.
+  // Included in the financial report (sourceType != PURCHASE) so managers
+  // see their real freight + overhead in the P&L, HT only per LOT 2.
+  PURCHASE_ADDITIONAL_COST
+}
+
+// ---------------------------------------------------------------------
+// Branches (multi-location: Joliette, Bishop, …)
+// ---------------------------------------------------------------------
+
+/// Physical restaurant location. Each branch keeps its own products,
+/// purchases, inventory periods and expenses. Suppliers stay global
+/// because Maison Burger orders from the same vendors for both sites.
+model Branch {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(120)
+  slug      String   @unique @db.VarChar(60)
+  address   String?  @db.VarChar(255)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users                    User[]
+  products                 InventoryProduct[]
+  purchases                Purchase[]
+  inventoryPeriods         InventoryPeriod[]
+  accountingExpenses       AccountingExpense[]
+  financialReports         FinancialReport[]
+  laborEntries             LaborEntry[]
+  repairEntries            RepairEntry[]
+  purchaseAdditionalCosts  PurchaseAdditionalCost[]
+  stockTransfersOut        StockTransfer[] @relation("TransfersOut")
+  stockTransfersIn         StockTransfer[] @relation("TransfersIn")
+
+  @@index([isActive])
+  @@map("branches")
+}
+
+// ---------------------------------------------------------------------
+// Identity & access
+// ---------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(120)
+  email        String   @unique @db.VarChar(190)
+  passwordHash String   @db.VarChar(255)
+  role         UserRole @default(MANAGER)
+  isActive     Boolean  @default(true)
+  /// Branch the user is assigned to. NULL means cross-branch access —
+  /// reserved for ADMIN / OWNER roles. MANAGER users must have a branchId.
+  branchId     String?  @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  branch              Branch?            @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  auditLogs           AuditLog[]
+  lockedFinancialReports FinancialReport[] @relation("LockedBy")
+  createdStockTransfers  StockTransfer[] @relation("TransferCreatedBy")
+
+  @@index([email])
+  @@index([branchId])
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------
+// Catalog
+// ---------------------------------------------------------------------
+
+model Category {
+  id           String       @id @default(uuid()) @db.Uuid
+  name         String       @unique @db.VarChar(120)
+  description  String?      @db.VarChar(500)
+  categoryType CategoryType @default(FOOD)
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  products InventoryProduct[]
+
+  @@index([categoryType])
+  @@index([isActive])
+  @@map("categories")
+}
+
+model Supplier {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(150)
+  contactName String?  @db.VarChar(150)
+  phone       String?  @db.VarChar(40)
+  email       String?  @db.VarChar(190)
+  address     String?  @db.VarChar(255)
+  notes       String?  @db.VarChar(1000)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  purchases Purchase[]
+  products  InventoryProduct[]
+  accountingExpenses AccountingExpense[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("suppliers")
+}
+
+model InventoryProduct {
+  id            String   @id @default(uuid()) @db.Uuid
+  branchId      String   @db.Uuid
+  name          String   @db.VarChar(150)
+  /// Unité de BASE — la plus petite unité consommable (pièce, g, L…).
+  /// Toutes les colonnes `quantity`/`*Quantity`/`unitPrice`/`defaultCost`
+  /// de la DB sont exprimées dans cette unité. Ne JAMAIS confondre avec
+  /// le packaging ci-dessous.
+  unit          String   @db.VarChar(20)
+  categoryId    String?  @db.Uuid
+  supplierId    String?  @db.Uuid
+  defaultCost   Decimal  @default(0) @db.Decimal(14, 4)
+  minStockLevel Decimal  @default(0) @db.Decimal(14, 4)
+  /// Nom OPTIONNEL du conditionnement (Carton / Box / Pack / Sac…). C'est
+  /// une vue utilisateur uniquement — la DB continue de stocker en unité
+  /// de base. NULL = produit unitaire (comportement historique inchangé).
+  /// Voir `packages/shared/src/lib/packaging.ts` pour la logique de
+  /// conversion (helpers `toBaseUnits` / `fromBaseUnits`).
+  packagingName   String?  @db.VarChar(40)
+  /// Combien d'unités de base contient UN packaging. Nullable et
+  /// strictement > 0 quand non-null (contrainte SQL CHECK dans la
+  /// migration). NULL ↔ packagingName NULL — les deux vont ensemble
+  /// (validation côté DTO service).
+  packagingFactor Decimal? @db.Decimal(14, 4)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  branch         Branch          @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  category       Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  supplier       Supplier?       @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  purchaseItems  PurchaseItem[]
+  inventoryLines InventoryLine[]
+  transfersAsSource StockTransferItem[] @relation("TransferSource")
+  transfersAsTarget StockTransferItem[] @relation("TransferTarget")
+
+  @@index([branchId])
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([isActive])
+  @@map("inventory_products")
+}
+
+// ---------------------------------------------------------------------
+// Purchases
+// ---------------------------------------------------------------------
+
+/// A supplier purchase. Totals are recomputed server-side on every write:
+///   subtotalHT  = Σ (line.quantity × line.unitPrice)
+///   tpsAmount   = subtotalHT × 0.05      (Canada federal 5%)
+///   tvqAmount   = subtotalHT × 0.09975   (Quebec provincial 9.975%)
+///   totalAmount = subtotalHT + tpsAmount + tvqAmount
+/// `invoiceNumber` is intentionally absent — the client identifies a
+/// purchase by date + supplier, not by an external reference. There is
+/// no longer any "cancelled" / "validated" concept — an erroneous
+/// purchase is hard-deleted via DELETE /purchases/:id.
+model Purchase {
+  id           String   @id @default(uuid()) @db.Uuid
+  branchId     String   @db.Uuid
+  supplierId   String   @db.Uuid
+  purchaseDate DateTime @db.Date
+  subtotalHT   Decimal  @default(0) @db.Decimal(14, 2)
+  tpsAmount    Decimal  @default(0) @db.Decimal(14, 2)
+  tvqAmount    Decimal  @default(0) @db.Decimal(14, 2)
+  totalAmount  Decimal  @default(0) @db.Decimal(14, 2)
+  note         String?  @db.VarChar(500)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  branch             Branch                   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  supplier           Supplier                 @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  items              PurchaseItem[]
+  accountingExpenses AccountingExpense[]
+  additionalCosts    PurchaseAdditionalCost[]
+
+  @@index([branchId])
+  @@index([supplierId])
+  @@index([purchaseDate])
+  @@map("purchases")
+}
+
+/// Frais supplémentaires liés à une facture d'achat (essence, livraison,
+/// péage, etc.). Chaque frais est comptabilisé séparément du mirror
+/// principal Purchase → AccountingExpense (qui reste
+/// `includeInFinancialReports=false` pour éviter le double-comptage avec
+/// l'inventaire).
+///
+/// **Règle métier V1 (LOT « Frais supplémentaires ») :**
+///   - Ne modifie JAMAIS `PurchaseItem.unitPrice`, `Product.defaultCost`,
+///     WAC, ni aucun agrégat d'inventaire.
+///   - Est mirroré 1-to-1 vers `AccountingExpense` avec
+///     `sourceType=PURCHASE_ADDITIONAL_COST` et
+///     `includeInFinancialReports=true`.
+///   - Apparaît en HT (`amountBeforeTax`) dans le rapport financier via
+///     la mécanique du LOT 2 (aucun code spécifique).
+model PurchaseAdditionalCost {
+  id                   String  @id @default(uuid()) @db.Uuid
+  purchaseId           String  @db.Uuid
+  branchId             String  @db.Uuid
+  /// Preset type (ESSENCE, LIVRAISON, PEAGE, TRANSPORT, MANUTENTION,
+  /// CHAINE_DU_FROID, DOUANE, AUTRE) — libre côté DB pour rester extensible
+  /// sans migration, l'application valide la valeur via la liste partagée.
+  costType             String  @db.VarChar(40)
+  description          String? @db.VarChar(500)
+  accountingCategoryId String  @db.Uuid
+  amountBeforeTax      Decimal @default(0) @db.Decimal(14, 2)
+  tpsAmount            Decimal @default(0) @db.Decimal(14, 2)
+  tvqAmount            Decimal @default(0) @db.Decimal(14, 2)
+  totalAmount          Decimal @default(0) @db.Decimal(14, 2)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  purchase           Purchase           @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  branch             Branch             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  accountingCategory AccountingCategory @relation(fields: [accountingCategoryId], references: [id], onDelete: Restrict)
+  accountingExpense  AccountingExpense?
+
+  @@index([purchaseId])
+  @@index([branchId])
+  @@index([accountingCategoryId])
+  @@map("purchase_additional_costs")
+}
+
+model PurchaseItem {
+  id         String  @id @default(uuid()) @db.Uuid
+  purchaseId String  @db.Uuid
+  productId  String  @db.Uuid
+  quantity   Decimal @db.Decimal(14, 4)
+  unitPrice  Decimal @db.Decimal(14, 4)
+  totalPrice Decimal @db.Decimal(14, 2)
+
+  purchase Purchase         @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  product  InventoryProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([purchaseId])
+  @@index([productId])
+  @@map("purchase_items")
+}
+
+// ---------------------------------------------------------------------
+// Monthly inventory
+// ---------------------------------------------------------------------
+
+model InventoryPeriod {
+  id          String       @id @default(uuid()) @db.Uuid
+  branchId    String       @db.Uuid
+  month       Int          @db.SmallInt
+  year        Int          @db.SmallInt
+  status      PeriodStatus @default(OPEN)
+  openingDate DateTime?    @db.Date
+  closingDate DateTime?    @db.Date
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  branch Branch          @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  lines  InventoryLine[]
+  report InventoryReport?
+
+  @@unique([branchId, year, month])
+  @@index([branchId])
+  @@index([status])
+  @@map("inventory_periods")
+}
+
+model InventoryLine {
+  id                  String  @id @default(uuid()) @db.Uuid
+  periodId            String  @db.Uuid
+  productId           String  @db.Uuid
+  openingQuantity     Decimal @default(0) @db.Decimal(14, 4)
+  openingUnitCost     Decimal @default(0) @db.Decimal(14, 4)
+  closingQuantity     Decimal @default(0) @db.Decimal(14, 4)
+  closingUnitCost     Decimal @default(0) @db.Decimal(14, 4)
+  purchasesQuantity   Decimal @default(0) @db.Decimal(14, 4)
+  purchasesValue      Decimal @default(0) @db.Decimal(14, 2)
+  transferInQuantity  Decimal @default(0) @db.Decimal(14, 4)
+  transferOutQuantity Decimal @default(0) @db.Decimal(14, 4)
+  consumptionQuantity Decimal @default(0) @db.Decimal(14, 4)
+  consumptionValue    Decimal @default(0) @db.Decimal(14, 2)
+
+  period  InventoryPeriod  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  product InventoryProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([periodId, productId])
+  @@index([periodId])
+  @@index([productId])
+  @@map("inventory_lines")
+}
+
+model InventoryReport {
+  id                 String   @id @default(uuid()) @db.Uuid
+  periodId           String   @unique @db.Uuid
+  openingValue       Decimal  @default(0) @db.Decimal(14, 2)
+  purchasesValue     Decimal  @default(0) @db.Decimal(14, 2)
+  closingValue       Decimal  @default(0) @db.Decimal(14, 2)
+  /// Total real cost across all category families. Kept as an invariant:
+  /// `realCost = foodCost + paperCost + cleaningCost`. Enforced by the
+  /// close() / reconcileClosedReport() services — never edit directly.
+  realCost           Decimal  @default(0) @db.Decimal(14, 2)
+  /// Ventilation par famille de coût (V2). `foodCost` correspond aux
+  /// produits dont la catégorie a `categoryType = FOOD`. `paperCost` couvre
+  /// `PAPIERS` ET `NON_FOOD` (fallback pour les catégories legacy non
+  /// encore reclassifiées). `cleaningCost` couvre `NETTOYAGE`.
+  foodCost           Decimal  @default(0) @db.Decimal(14, 2)
+  paperCost          Decimal  @default(0) @db.Decimal(14, 2)
+  cleaningCost       Decimal  @default(0) @db.Decimal(14, 2)
+  salesRevenue       Decimal? @db.Decimal(14, 2)
+  foodCostPercentage Decimal? @db.Decimal(6, 2)
+  generatedAt        DateTime @default(now())
+
+  period InventoryPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_reports")
+}
+
+// ---------------------------------------------------------------------
+// Accounting — monthly expenses prepared for the external accountant
+// ---------------------------------------------------------------------
+
+/// Monthly accountant-facing expense.
+///
+/// Two origins (see `sourceType`):
+///   MANUAL        — created via the Accounting form. User enters HT, TPS,
+///                   TVQ explicitly; backend just sums (no rate enforcement).
+///   PURCHASE_ITEM — auto-generated 1-to-1 from a PurchaseItem when the
+///                   parent Purchase is created/updated. TPS/TVQ are
+///                   allocated proportionally from the purchase header.
+///                   Not editable in the Accounting UI; updating the source
+///                   Purchase re-syncs the linked row.
+///
+/// Double-count safety: rows with `category = ACHATS_FOURNISSEURS` (which
+/// includes ALL PURCHASE_ITEM rows by construction) are excluded from the
+/// financial-report expense groupBy — food cost already comes from
+/// `InventoryReport.realCost`.
+///
+/// `deletedAt` is used for soft delete (MANUAL rows only — auto rows go
+/// through the sync helper on the parent Purchase).
+/// Free-form accounting category. Replaces the fixed `ExpenseCategory` enum
+/// for new entries — the user can type any name (e.g. "Permis municipal")
+/// and the backend auto-creates a row if no case-insensitive match exists.
+/// `name` is unique to prevent the user from creating duplicates with
+/// different casings; the application also trims whitespace before
+/// comparing.
+///
+/// We don't drop the legacy `category` enum column on AccountingExpense
+/// yet — keeping it lets us roll back without losing data, and the seed
+/// migration backfills `accountingCategoryId` for every existing row.
+model AccountingCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @db.VarChar(120)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expenses                AccountingExpense[]
+  purchaseAdditionalCosts PurchaseAdditionalCost[]
+
+  @@map("accounting_categories")
+}
+
+model AccountingExpense {
+  id              String          @id @default(uuid()) @db.Uuid
+  branchId        String          @db.Uuid
+  expenseDate     DateTime        @db.Date
+  transactionDate DateTime?       @db.Date
+  supplierId      String?         @db.Uuid
+  supplierName    String?         @db.VarChar(150)
+  /// Legacy fixed-enum category. Still populated by the application for
+  /// backwards-compat (new MANUAL rows default to AUTRES). The dynamic
+  /// category exposed to the user lives in `accountingCategoryId`.
+  category        ExpenseCategory
+  /// Dynamic free-form category (new world). Nullable for now so the
+  /// migration backfill can run incrementally; the application treats it
+  /// as required on every write going forward.
+  accountingCategoryId String? @db.Uuid
+  /// Whether this expense should be aggregated into the monthly financial
+  /// report. Defaults to FALSE — the client must opt-in explicitly per
+  /// dépense. Auto-synced REPAIR rows are created with TRUE; PURCHASE
+  /// rows with FALSE (they're already counted as food cost via inventory).
+  includeInFinancialReports Boolean @default(false)
+  description     String          @db.VarChar(500)
+  referenceNumber String?         @db.VarChar(80)
+  paymentMethod   PaymentMethod?
+  amountBeforeTax Decimal         @default(0) @db.Decimal(14, 2)
+  tpsAmount       Decimal         @default(0) @db.Decimal(14, 2)
+  tvqAmount       Decimal         @default(0) @db.Decimal(14, 2)
+  totalAmount     Decimal         @default(0) @db.Decimal(14, 2)
+  notes           String?         @db.VarChar(1000)
+
+  // Origin tracking. Defaults to MANUAL so existing rows migrate cleanly.
+  sourceType AccountingSourceType @default(MANUAL)
+  // Link back to the source row for auto-synced expenses (1-to-1). Cascade on
+  // delete so cleanup of a Purchase / LaborEntry / RepairEntry auto-removes
+  // its accounting row. `@unique` prevents duplicate rows on a re-sync —
+  // multiple NULLs are still allowed for MANUAL rows because Postgres treats
+  // NULL as distinct.
+  purchaseId               String? @unique @db.Uuid
+  laborId                  String? @unique @db.Uuid
+  repairId                 String? @unique @db.Uuid
+  /// Set only for rows mirrored from a PurchaseAdditionalCost. Cascade so
+  /// deleting a Purchase (which cascades to its additional costs) auto-
+  /// cleans the accounting rows.
+  purchaseAdditionalCostId String? @unique @db.Uuid
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  branch                 Branch                  @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  supplier               Supplier?               @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  purchase               Purchase?               @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  labor                  LaborEntry?             @relation(fields: [laborId], references: [id], onDelete: Cascade)
+  repair                 RepairEntry?            @relation(fields: [repairId], references: [id], onDelete: Cascade)
+  purchaseAdditionalCost PurchaseAdditionalCost? @relation(fields: [purchaseAdditionalCostId], references: [id], onDelete: Cascade)
+  accountingCategory     AccountingCategory?     @relation(fields: [accountingCategoryId], references: [id], onDelete: Restrict)
+
+  @@index([branchId])
+  @@index([expenseDate])
+  @@index([category])
+  @@index([accountingCategoryId])
+  @@index([includeInFinancialReports])
+  @@index([supplierId])
+  @@index([deletedAt])
+  @@index([sourceType])
+  @@map("accounting_expenses")
+}
+
+// ---------------------------------------------------------------------
+// Auditing
+// ---------------------------------------------------------------------
+
+model AuditLog {
+  id        String      @id @default(uuid()) @db.Uuid
+  userId    String?     @db.Uuid
+  action    AuditAction
+  entity    String      @db.VarChar(80)
+  entityId  String?     @db.VarChar(80)
+  oldValue  Json?
+  newValue  Json?
+  createdAt DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ---------------------------------------------------------------------
+// Financial reports — monthly consolidated P&L per branch
+// ---------------------------------------------------------------------
+
+/// Monthly financial report (P&L) for a branch. Stores user-entered revenue
+/// lines (live, always editable) and — when LOCKED — a snapshot of all
+/// computed expense totals so the report stays stable even if downstream
+/// Accounting / Inventory data is later corrected.
+///
+/// Food cost comes from `InventoryReport.realCost` of the same period.
+/// Operating expenses are aggregated from `AccountingExpense` rows of the
+/// calendar month, grouped by `ExpenseCategory` (ACHATS_FOURNISSEURS is
+/// excluded to avoid double-counting with the inventory food cost).
+model FinancialReport {
+  id            String                @id @default(uuid()) @db.Uuid
+  branchId      String                @db.Uuid
+  month         Int                   @db.SmallInt
+  year          Int                   @db.SmallInt
+  status        FinancialReportStatus @default(DRAFT)
+
+  // User-entered revenue + labor lines (always live, V1 has no POS sync).
+  sales         Decimal  @default(0) @db.Decimal(14, 2)
+  discounts     Decimal  @default(0) @db.Decimal(14, 2)
+  employeeMeals Decimal  @default(0) @db.Decimal(14, 2)
+  tips          Decimal  @default(0) @db.Decimal(14, 2)
+  otherRevenue  Decimal  @default(0) @db.Decimal(14, 2)
+  laborCost     Decimal  @default(0) @db.Decimal(14, 2)
+  notes         String?  @db.Text
+
+  // Snapshot at lock time (null while DRAFT).
+  // `snapshotExpensesByCategory` is a JSON map { EMBALLAGES: 123.45, ... }.
+  snapshotFoodCost           Decimal? @db.Decimal(14, 2)
+  /// V2 ventilation snapshots — `snapshotFoodCost` désigne désormais
+  /// SPÉCIFIQUEMENT la part Food. Paper et Cleaning sont stockés à part.
+  /// Le total realCost reste = food + paper + cleaning (recomposé à la
+  /// lecture pour les rapports LOCKED).
+  snapshotPaperCost          Decimal? @db.Decimal(14, 2)
+  snapshotCleaningCost       Decimal? @db.Decimal(14, 2)
+  snapshotExpensesByCategory Json?
+  snapshotTotalExpenses      Decimal? @db.Decimal(14, 2)
+  snapshotGrossRevenue       Decimal? @db.Decimal(14, 2)
+  snapshotNetRevenue         Decimal? @db.Decimal(14, 2)
+  snapshotNetProfit          Decimal? @db.Decimal(14, 2)
+  snapshotFoodCostPct        Decimal? @db.Decimal(7, 4)
+  snapshotNetMarginPct       Decimal? @db.Decimal(7, 4)
+  lockedAt                   DateTime?
+  lockedById                 String?  @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch   Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  lockedBy User?  @relation("LockedBy", fields: [lockedById], references: [id], onDelete: SetNull)
+
+  @@unique([branchId, year, month])
+  @@index([branchId])
+  @@index([status])
+  @@map("financial_reports")
+}
+
+// ---------------------------------------------------------------------
+// Labor — monthly hours per employee, multiplied by an hourly rate.
+// Standalone for V1 (not aggregated into the financial report yet).
+// ---------------------------------------------------------------------
+
+/// One labor entry = one shift (employee × date × hours × hourlyRate).
+/// `totalAmount` is recomputed server-side from `hours × hourlyRate`.
+model LaborEntry {
+  id           String   @id @default(uuid()) @db.Uuid
+  branchId     String   @db.Uuid
+  date         DateTime @db.Date
+  employeeName String   @db.VarChar(150)
+  role         String?  @db.VarChar(100)
+  hours        Decimal  @default(0) @db.Decimal(10, 2)
+  hourlyRate   Decimal  @default(0) @db.Decimal(10, 2)
+  totalAmount  Decimal  @default(0) @db.Decimal(14, 2)
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  branch            Branch             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  accountingExpense AccountingExpense?
+
+  @@index([branchId])
+  @@index([date])
+  @@map("labor_entries")
+}
+
+// ---------------------------------------------------------------------
+// Repairs — equipment fixes, maintenance work, vendor invoices.
+// Standalone for V1; flexible status enum so the client can refine later.
+// ---------------------------------------------------------------------
+
+enum RepairStatus {
+  PLANNED
+  IN_PROGRESS
+  DONE
+}
+
+/// One repair entry = one event (date × equipment × vendor × cost).
+/// `totalAmount` is recomputed server-side from `amountBeforeTax + tps + tvq`.
+model RepairEntry {
+  id              String       @id @default(uuid()) @db.Uuid
+  branchId        String       @db.Uuid
+  date            DateTime     @db.Date
+  title           String       @db.VarChar(200)
+  equipment       String?      @db.VarChar(150)
+  vendorName      String?      @db.VarChar(150)
+  amountBeforeTax Decimal      @default(0) @db.Decimal(14, 2)
+  tpsAmount       Decimal      @default(0) @db.Decimal(14, 2)
+  tvqAmount       Decimal      @default(0) @db.Decimal(14, 2)
+  totalAmount     Decimal      @default(0) @db.Decimal(14, 2)
+  status          RepairStatus @default(PLANNED)
+  notes           String?      @db.Text
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  branch            Branch             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  accountingExpense AccountingExpense?
+
+  @@index([branchId])
+  @@index([date])
+  @@index([status])
+  @@map("repair_entries")
+}
+
+// ---------------------------------------------------------------------
+// Stock Transfers
+// ---------------------------------------------------------------------
+
+model StockTransfer {
+  id                 String              @id @default(uuid()) @db.Uuid
+  fromBranchId       String              @db.Uuid
+  toBranchId         String              @db.Uuid
+  status             StockTransferStatus @default(COMPLETED)
+  note               String?             @db.VarChar(500)
+  createdById        String?             @db.Uuid
+  createdAt          DateTime            @default(now())
+  completedAt        DateTime?
+  reversedTransferId String?             @db.Uuid
+
+  fromBranch         Branch              @relation("TransfersOut", fields: [fromBranchId], references: [id], onDelete: Restrict)
+  toBranch           Branch              @relation("TransfersIn", fields: [toBranchId], references: [id], onDelete: Restrict)
+  createdBy          User?               @relation("TransferCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  items              StockTransferItem[]
+  
+  reversedTransfer   StockTransfer?      @relation("ReversedTransfer", fields: [reversedTransferId], references: [id])
+  reversals          StockTransfer[]     @relation("ReversedTransfer")
+
+  @@index([fromBranchId])
+  @@index([toBranchId])
+  @@index([createdAt])
+  @@map("stock_transfers")
+}
+
+model StockTransferItem {
+  id              String           @id @default(uuid()) @db.Uuid
+  transferId      String           @db.Uuid
+  sourceProductId String           @db.Uuid
+  targetProductId String           @db.Uuid
+  quantity        Decimal          @db.Decimal(14, 4)
+  unitCost        Decimal          @default(0) @db.Decimal(14, 4)
+  createdAt       DateTime         @default(now())
+
+  transfer        StockTransfer    @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  sourceProduct   InventoryProduct @relation("TransferSource", fields: [sourceProductId], references: [id], onDelete: Restrict)
+  targetProduct   InventoryProduct @relation("TransferTarget", fields: [targetProductId], references: [id], onDelete: Restrict)
+
+  @@index([transferId])
+  @@index([sourceProductId])
+  @@index([targetProductId])
+  @@map("stock_transfer_items")
+}

@@ -1,0 +1,29 @@
+{
+  "name": "inventorymdb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Inventory MDB — Global inventory & food cost control platform",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:backend": "pnpm --filter @inventorymdb/backend dev",
+    "dev:frontend": "pnpm --filter @inventorymdb/frontend dev",
+    "build": "pnpm -r --filter \"./apps/*\" build",
+    "build:shared": "pnpm --filter @inventorymdb/shared build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @inventorymdb/backend prisma:migrate",
+    "db:generate": "pnpm --filter @inventorymdb/backend prisma:generate",
+    "db:seed": "pnpm --filter @inventorymdb/backend prisma:seed",
+    "db:studio": "pnpm --filter @inventorymdb/backend prisma:studio"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "prettier": "^3.3.3"
+  }
+}

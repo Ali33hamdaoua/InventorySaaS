@@ -1,0 +1,41 @@
+@startuml
+
+start
+
+:Créer ou ouvrir la période du mois;
+:Saisir / importer les produits;
+:Saisir début inventaire;
+
+while (Pendant le mois ?) is (Oui)
+  :Ajouter achats;
+  :Mettre à jour fournisseurs si nécessaire;
+  :Consulter dashboard provisoire;
+endwhile (Fin du mois)
+
+:Saisir inventaire final;
+:Calculer valeur début inventaire;
+:Calculer total achats;
+:Calculer valeur fin inventaire;
+
+:Cost réel = début + achats - fin;
+
+if (CA mensuel disponible ?) then (Oui)
+  :Calculer Food Cost %;
+else (Non)
+  :Afficher seulement Cost réel;
+endif
+
+:Générer KPI et graphes;
+:Générer rapport PDF / Excel / CSV;
+
+if (Données validées ?) then (Oui)
+  :Clôturer le mois;
+  :Créer automatiquement le mois suivant;
+  :Copier fin inventaire comme début inventaire suivant;
+else (Non)
+  :Corriger les données;
+endif
+
+stop
+
+@enduml

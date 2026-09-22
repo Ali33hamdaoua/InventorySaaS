@@ -1,0 +1,8 @@
+dist/
+
+# Guard against stray compilation artifacts in src/ (an older tsconfig used
+# `outDir: ./src` and littered the source tree with .js/.d.ts files —
+# Vite/Rollup picked them up before dist/ and broke prod builds).
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts

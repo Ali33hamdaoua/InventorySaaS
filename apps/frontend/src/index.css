@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide the up/down spinner arrows on all numeric inputs globally.
+   The user finds them noisy in counting-heavy workflows (inventaire, achats).
+   They keep working via keyboard arrows for power users, but the visual UI
+   is clean. Use type="text" + inputMode="decimal" when you also need to
+   accept "1,25" as 1.25 (French decimal separator). */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* ============================================================
+   Inventory MDB — Maison Burger theme
+   Palette derived from the Maison Burger frontend:
+     - Brand red       #ED312E
+     - Brand red hover #F03436
+     - Page bg         #0A0A0A
+     - Card / topbar   #1A1A1A
+     - Foreground      #FAF8F5
+     - Muted text      #A0A0A0
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* DARK is the default for the demo dashboard */
+    --background: 0 0% 4%;             /* #0A0A0A */
+    --foreground: 36 30% 97%;           /* #FAF8F5 */
+
+    --card: 0 0% 10%;                   /* #1A1A1A */
+    --card-foreground: 36 30% 97%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 36 30% 97%;
+
+    --primary: 1 84% 55%;               /* #ED312E */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 14%;              /* #242424 */
+    --secondary-foreground: 36 30% 97%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 63%;       /* #A0A0A0 */
+
+    --accent: 1 84% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;                 /* #2D2D2D */
+    --input: 0 0% 14%;
+    --ring: 1 84% 55%;
+
+    --radius: 0.625rem;                 /* 10px (Maison Burger button radius) */
+
+    /* Recharts custom palette */
+    --chart-1: 1 84% 55%;
+    --chart-2: 36 70% 60%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 200 70% 60%;
+    --chart-5: 280 60% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', 'Helvetica Now Display', 'Helvetica Neue', Arial, sans-serif;
+    font-feature-settings: 'cv11', 'ss01', 'rlig' 1, 'calt' 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Manito', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* Brand glow used on primary CTAs (login submit, "Clôturer", etc.) */
+  .btn-brand-glow {
+    box-shadow: 0 4px 24px hsl(var(--primary) / 0.45);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .btn-brand-glow:hover {
+    box-shadow: 0 6px 30px hsl(var(--primary) / 0.6);
+    transform: translateY(-1px);
+  }
+
+  /* Subtle Maison-Burger-style scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}

@@ -1,0 +1,36 @@
+@startuml
+
+actor Manager
+participant "Frontend React" as Frontend
+participant "Inventory API" as API
+participant "Database" as DB
+participant "Report Service" as ReportService
+
+Manager -> Frontend : Cliquer sur "Clôturer le mois"
+Frontend -> API : POST /inventory-periods/{id}/close
+
+API -> DB : Vérifier période ouverte
+DB --> API : Période OPEN
+
+API -> DB : Récupérer lignes inventaire
+DB --> API : InventoryLines
+
+API -> DB : Récupérer achats du mois
+DB --> API : Purchases + PurchaseItems
+
+API -> API : Calculer opening + purchases - closing
+
+API -> ReportService : Générer rapport mensuel
+ReportService -> DB : Sauvegarder InventoryReport
+DB --> ReportService : Rapport sauvegardé
+
+API -> DB : Mettre période status = CLOSED
+DB --> API : Période clôturée
+
+API -> DB : Créer période mois suivant
+API -> DB : Copier closingQuantity vers openingQuantity
+
+API --> Frontend : Résultat + KPI
+Frontend --> Manager : Afficher rapport de clôture
+
+@enduml

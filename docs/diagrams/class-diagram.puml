@@ -1,0 +1,125 @@
+@startuml
+
+class User {
+  +id: UUID
+  +name: String
+  +email: String
+  +passwordHash: String
+  +role: UserRole
+  +createdAt: DateTime
+}
+
+enum UserRole {
+  OWNER
+  MANAGER
+  ADMIN
+}
+
+class Category {
+  +id: UUID
+  +name: String
+  +description: String
+  +createdAt: DateTime
+}
+
+class Supplier {
+  +id: UUID
+  +name: String
+  +phone: String
+  +email: String
+  +address: String
+  +createdAt: DateTime
+}
+
+class InventoryProduct {
+  +id: UUID
+  +name: String
+  +sku: String
+  +unit: String
+  +defaultCost: Decimal
+  +minStockLevel: Decimal
+  +isActive: Boolean
+  +createdAt: DateTime
+}
+
+class Purchase {
+  +id: UUID
+  +supplierId: UUID
+  +invoiceNumber: String
+  +purchaseDate: Date
+  +totalAmount: Decimal
+  +note: String
+  +createdAt: DateTime
+}
+
+class PurchaseItem {
+  +id: UUID
+  +purchaseId: UUID
+  +productId: UUID
+  +quantity: Decimal
+  +unitPrice: Decimal
+  +totalPrice: Decimal
+}
+
+class InventoryPeriod {
+  +id: UUID
+  +month: Int
+  +year: Int
+  +status: PeriodStatus
+  +openingDate: Date
+  +closingDate: Date
+  +createdAt: DateTime
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+}
+
+class InventoryLine {
+  +id: UUID
+  +periodId: UUID
+  +productId: UUID
+  +openingQuantity: Decimal
+  +openingUnitCost: Decimal
+  +closingQuantity: Decimal
+  +closingUnitCost: Decimal
+  +purchasesQuantity: Decimal
+  +purchasesValue: Decimal
+  +consumptionQuantity: Decimal
+  +consumptionValue: Decimal
+}
+
+class InventoryReport {
+  +id: UUID
+  +periodId: UUID
+  +openingValue: Decimal
+  +purchasesValue: Decimal
+  +closingValue: Decimal
+  +realCost: Decimal
+  +salesRevenue: Decimal
+  +foodCostPercentage: Decimal
+  +generatedAt: DateTime
+}
+
+class AuditLog {
+  +id: UUID
+  +userId: UUID
+  +action: String
+  +entity: String
+  +entityId: UUID
+  +oldValue: Json
+  +newValue: Json
+  +createdAt: DateTime
+}
+
+Category "1" --> "many" InventoryProduct
+Supplier "1" --> "many" Purchase
+Purchase "1" --> "many" PurchaseItem
+InventoryProduct "1" --> "many" PurchaseItem
+InventoryPeriod "1" --> "many" InventoryLine
+InventoryProduct "1" --> "many" InventoryLine
+InventoryPeriod "1" --> "1" InventoryReport
+User "1" --> "many" AuditLog
+
+@enduml

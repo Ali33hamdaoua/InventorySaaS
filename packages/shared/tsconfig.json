@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // module:CommonJS keeps the built dist require()-able by the NestJS
+    // backend. moduleResolution is intentionally omitted so TS picks the
+    // implicit default ("node10") without triggering the explicit-value
+    // deprecation warning. When we migrate to NodeNext/ESM later, set both
+    // module and moduleResolution to "NodeNext" together.
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": false,
+    "lib": ["ES2022"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

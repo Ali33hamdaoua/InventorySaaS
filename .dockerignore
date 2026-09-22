@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+**/node_modules
+
+# Build
+dist
+**/dist
+coverage
+**/coverage
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+*.log.*
+npm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Business / temporary files
+*.xlsx
+*.pdf
+tmp
+temp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml

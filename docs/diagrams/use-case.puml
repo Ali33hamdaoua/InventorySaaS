@@ -1,0 +1,45 @@
+@startuml
+left to right direction
+
+actor "Owner" as Owner
+actor "Manager" as Manager
+actor "Admin" as Admin
+
+rectangle "Inventory & Food Cost System" {
+  usecase "Gérer les produits" as UC1
+  usecase "Gérer les catégories" as UC2
+  usecase "Gérer les fournisseurs" as UC3
+  usecase "Ajouter les achats" as UC4
+  usecase "Créer une période mensuelle" as UC5
+  usecase "Saisir début inventaire" as UC6
+  usecase "Saisir fin inventaire" as UC7
+  usecase "Calculer le cost réel" as UC8
+  usecase "Consulter dashboard KPI" as UC9
+  usecase "Analyser les graphes" as UC10
+  usecase "Exporter PDF / Excel / CSV" as UC11
+  usecase "Clôturer le mois" as UC12
+  usecase "Consulter historique" as UC13
+  usecase "Gérer les utilisateurs" as UC14
+}
+
+Owner --> UC9
+Owner --> UC10
+Owner --> UC11
+Owner --> UC13
+
+Manager --> UC4
+Manager --> UC6
+Manager --> UC7
+Manager --> UC12
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC5
+Admin --> UC14
+
+UC12 --> UC8 : include
+UC9 --> UC8 : include
+UC11 --> UC8 : include
+
+@enduml

@@ -1,0 +1,87 @@
+services:
+  inventory-backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+
+    container_name: inventory-backend
+    restart: unless-stopped
+
+    env_file:
+      - apps/backend/.env
+
+    expose:
+      - "3001"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      - "traefik.http.routers.inventory-api.rule=Host(`inventory.maisonburger.ca`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.inventory-api.entrypoints=websecure"
+      - "traefik.http.routers.inventory-api.tls.certresolver=letsencrypt"
+
+      - "traefik.http.services.inventory-api.loadbalancer.server.port=3001"
+
+    networks:
+      - proxy
+      - inventory-internal
+
+    security_opt:
+      - no-new-privileges:true
+
+    cpus: "1.50"
+    mem_limit: 1536m
+    pids_limit: 250
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  inventory-frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        VITE_API_URL: https://inventory.maisonburger.ca/api
+
+    container_name: inventory-frontend
+    restart: unless-stopped
+
+    expose:
+      - "80"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      - "traefik.http.routers.inventory-front.rule=Host(`inventory.maisonburger.ca`)"
+      - "traefik.http.routers.inventory-front.entrypoints=websecure"
+      - "traefik.http.routers.inventory-front.tls.certresolver=letsencrypt"
+
+      - "traefik.http.services.inventory-front.loadbalancer.server.port=80"
+
+    networks:
+      - proxy
+
+    security_opt:
+      - no-new-privileges:true
+
+    cpus: "0.50"
+    mem_limit: 256m
+    pids_limit: 100
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  proxy:
+    external: true
+
+  inventory-internal:
+    internal: true
