@@ -109,7 +109,7 @@ export function ProductDeleteDialog({ open, onOpenChange, product }: Props) {
         ) : !canDelete ? (
           <div className="space-y-3">
             <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               <div className="space-y-1">
                 <p className="font-medium text-foreground">
                   Suppression refusée : historique existant.

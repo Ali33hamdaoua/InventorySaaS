@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { MonthlyPurchasesPoint } from '@inventorymdb/shared';
-import { BRAND_COLORS, primaryAlpha } from '@/lib/brand';
+import { BRAND_COLORS, primaryAlpha, CHART_SURFACE } from '@/lib/brand';
 import { CURRENCY } from '@/lib/brand';
 
 interface Props {
@@ -35,10 +35,10 @@ export function MonthlyPurchasesChart({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-        <CartesianGrid stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
-        <XAxis dataKey="label" stroke="#A0A0A0" fontSize={12} tickLine={false} axisLine={false} />
+        <CartesianGrid stroke={CHART_SURFACE.grid} strokeDasharray="3 3" />
+        <XAxis dataKey="label" stroke={CHART_SURFACE.axis} fontSize={12} tickLine={false} axisLine={false} />
         <YAxis
-          stroke="#A0A0A0"
+          stroke={CHART_SURFACE.axis}
           fontSize={12}
           tickLine={false}
           axisLine={false}
@@ -48,10 +48,10 @@ export function MonthlyPurchasesChart({ data }: Props) {
         <Tooltip
           cursor={{ fill: primaryAlpha(0.08) }}
           contentStyle={{
-            background: '#1a1a1a',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: CHART_SURFACE.tooltipBg,
+            border: `1px solid ${CHART_SURFACE.tooltipBorder}`,
             borderRadius: 10,
-            color: '#FAF8F5',
+            color: CHART_SURFACE.tooltipText,
             fontSize: 12,
           }}
           formatter={(v: number) => [`${tooltipAmount.format(v)} ${CURRENCY.symbol}`, 'Achats']}

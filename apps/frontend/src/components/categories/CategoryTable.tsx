@@ -45,7 +45,7 @@ export function CategoryTable({ categories, loading, onEdit, onToggleStatus }: P
                 <tr
                   key={c.id}
                   className={cn(
-                    'border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]',
+                    'border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]',
                     !c.isActive && 'opacity-60',
                   )}
                 >
@@ -85,7 +85,7 @@ export function CategoryTable({ categories, loading, onEdit, onToggleStatus }: P
                         onClick={() => onToggleStatus(c)}
                         className={cn(
                           'gap-1.5',
-                          c.isActive ? 'hover:text-destructive' : 'hover:text-emerald-400',
+                          c.isActive ? 'hover:text-destructive' : 'hover:text-emerald-600',
                         )}
                         aria-label={c.isActive ? `Désactiver ${c.name}` : `Réactiver ${c.name}`}
                       >

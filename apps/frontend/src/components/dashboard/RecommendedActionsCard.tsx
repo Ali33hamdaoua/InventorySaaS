@@ -18,7 +18,7 @@ const severityStyle: Record<RecommendedActionSeverity, { icon: JSX.Element; chip
   },
   success: {
     icon: <CheckCircle2 className="h-4 w-4" />,
-    chip: 'bg-emerald-500/15 text-emerald-400',
+    chip: 'bg-emerald-500/15 text-emerald-600',
     row: 'hover:bg-emerald-500/[0.04]',
   },
 };

@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { CategoryCostBreakdown } from '@inventorymdb/shared';
-import { CHART_PALETTE } from '@/lib/brand';
+import { CHART_PALETTE, CHART_SURFACE } from '@/lib/brand';
 import { currency } from '@/lib/utils';
 
 interface Props {
@@ -32,10 +32,10 @@ export function CategoryBreakdownChart({ data }: Props) {
         </Pie>
         <Tooltip
           contentStyle={{
-            background: '#1a1a1a',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: CHART_SURFACE.tooltipBg,
+            border: `1px solid ${CHART_SURFACE.tooltipBorder}`,
             borderRadius: 10,
-            color: '#FAF8F5',
+            color: CHART_SURFACE.tooltipText,
             fontSize: 12,
           }}
           formatter={(v: number, name: string) => [

@@ -46,7 +46,7 @@ export function BranchesTable({ branches, loading, activeBranchId, onEdit, onTog
                 return (
                   <tr
                     key={b.id}
-                    className="border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]"
+                    className="border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]"
                   >
                     <td className="px-3 py-3 font-medium">{b.name}</td>
                     <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{b.slug}</td>
@@ -89,7 +89,7 @@ export function BranchesTable({ branches, loading, activeBranchId, onEdit, onTog
                           title={b.isActive ? 'Désactiver' : 'Réactiver'}
                           className={
                             'h-8 w-8 ' +
-                            (b.isActive ? 'hover:text-destructive' : 'hover:text-emerald-400')
+                            (b.isActive ? 'hover:text-destructive' : 'hover:text-emerald-600')
                           }
                         >
                           {b.isActive ? <PowerOff className="h-4 w-4" /> : <Power className="h-4 w-4" />}

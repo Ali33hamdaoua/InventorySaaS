@@ -74,7 +74,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="admin@inventorymdb.local"
+                placeholder="vous@exemple.com"
                 {...form.register('email')}
               />
               {form.formState.errors.email && (

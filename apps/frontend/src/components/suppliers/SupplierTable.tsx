@@ -57,7 +57,7 @@ export function SupplierTable({ suppliers, loading, onEdit, onToggleStatus }: Pr
                   <tr
                     key={s.id}
                     className={cn(
-                      'border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]',
+                      'border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]',
                       !s.isActive && 'opacity-60',
                     )}
                   >
@@ -128,7 +128,7 @@ export function SupplierTable({ suppliers, loading, onEdit, onToggleStatus }: Pr
                           onClick={() => onToggleStatus(s)}
                           className={cn(
                             'gap-1.5',
-                            s.isActive ? 'hover:text-destructive' : 'hover:text-emerald-400',
+                            s.isActive ? 'hover:text-destructive' : 'hover:text-emerald-600',
                           )}
                           aria-label={s.isActive ? `Désactiver ${s.name}` : `Réactiver ${s.name}`}
                         >

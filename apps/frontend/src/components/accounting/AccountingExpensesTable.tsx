@@ -123,7 +123,7 @@ export function AccountingExpensesTable({
                   <tr
                     key={e.id}
                     className={cn(
-                      'group border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]',
+                      'group border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]',
                       // Subtle background tint on auto rows. The left gutter
                       // indicator lives on the first cell as an inset
                       // box-shadow (see below) — NEVER use position:relative +

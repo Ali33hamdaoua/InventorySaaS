@@ -55,7 +55,7 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="hidden w-64 flex-col border-r border-border/60 bg-[#111111] md:flex">
+    <aside className="hidden w-64 flex-col border-r border-border/60 bg-card md:flex">
       <div className="flex h-16 items-center justify-center border-b border-border/60 px-6">
         <Logo size={40} className="shrink-0" />
       </div>
@@ -70,7 +70,7 @@ export function Sidebar() {
                 'group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all',
                 isActive
                   ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+                  : 'text-muted-foreground hover:bg-[var(--subtle-overlay)] hover:text-foreground',
               )
             }
           >

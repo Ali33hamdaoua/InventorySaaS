@@ -23,7 +23,7 @@ export function ProductImportStatusBadge({ status }: { status: ProductImportStat
     return (
       <Badge
         variant="outline"
-        className="gap-1 border-amber-500/40 bg-amber-500/10 text-amber-500"
+        className="gap-1 border-amber-500/40 bg-amber-500/10 text-amber-600"
       >
         <PowerOff className="h-3 w-3" />
         Inactif existant

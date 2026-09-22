@@ -54,7 +54,7 @@ export function UsersTable({ users, loading, currentUserId, onEdit, onToggle }: 
                 return (
                   <tr
                     key={u.id}
-                    className="border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]"
+                    className="border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]"
                   >
                     <td className="px-3 py-3 font-medium">
                       {u.name}
@@ -106,7 +106,7 @@ export function UsersTable({ users, loading, currentUserId, onEdit, onToggle }: 
                           }
                           className={
                             'h-8 w-8 ' +
-                            (u.isActive ? 'hover:text-destructive' : 'hover:text-emerald-400')
+                            (u.isActive ? 'hover:text-destructive' : 'hover:text-emerald-600')
                           }
                         >
                           {u.isActive ? (

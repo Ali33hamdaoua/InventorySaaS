@@ -19,7 +19,7 @@ export function BranchSwitcher() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 rounded-md border border-border/60 bg-[#1f1f1f] px-3 py-1.5">
+      <div className="flex items-center gap-2 rounded-md border border-border/60 bg-secondary px-3 py-1.5">
         <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
         <Skeleton className="h-3 w-20" />
       </div>

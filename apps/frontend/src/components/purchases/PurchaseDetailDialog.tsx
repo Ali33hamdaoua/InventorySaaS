@@ -189,7 +189,7 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                       {it.product && !it.product.isActive && (
                         <Badge
                           variant="outline"
-                          className="ml-1.5 border-amber-500/40 bg-amber-500/10 px-1.5 py-0 text-[9px] align-middle text-amber-500"
+                          className="ml-1.5 border-amber-500/40 bg-amber-500/10 px-1.5 py-0 text-[9px] align-middle text-amber-600"
                           title="Produit désactivé — cette ligne d'historique reste inchangée."
                         >
                           Inactif
@@ -218,8 +218,8 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
         {additionalCosts.length > 0 && (
           <div className="overflow-x-auto rounded-md border border-amber-500/30 bg-amber-500/[0.03]">
             <div className="flex items-center gap-2 border-b border-amber-500/20 bg-amber-500/[0.05] px-3 py-2">
-              <Fuel className="h-4 w-4 text-amber-500" />
-              <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-500">
+              <Fuel className="h-4 w-4 text-amber-600" />
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-600">
                 Frais supplémentaires
               </h3>
               <span
@@ -294,7 +294,7 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                   <span className="text-muted-foreground">
                     Frais supplémentaires
                   </span>
-                  <span className="tabular-nums text-amber-500">
+                  <span className="tabular-nums text-amber-600">
                     {currency.format(additionalCostsTotal)}
                   </span>
                 </div>

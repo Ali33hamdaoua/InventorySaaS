@@ -67,7 +67,7 @@ export function ExportDropdownButton({ onExport, disabled, label = 'Exporter' }:
         <DropdownMenuLabel>Format</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => void run('excel')} disabled={running !== null}>
-          <FileSpreadsheet className="h-4 w-4 text-emerald-400" />
+          <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
           <span>Exporter Excel</span>
           {running === 'excel' && <Loader2 className="ml-auto h-3 w-3 animate-spin" />}
         </DropdownMenuItem>

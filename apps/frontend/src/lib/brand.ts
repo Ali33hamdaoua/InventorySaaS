@@ -20,17 +20,47 @@ export const BRAND = {
   name: env(import.meta.env.VITE_BRAND_NAME, 'Hong Kong Sushi'),
   subtitle: env(import.meta.env.VITE_BRAND_SUBTITLE, 'Inventaire & food cost — Agadir'),
   logo: env(import.meta.env.VITE_BRAND_LOGO, '/logo.png'),
-  theme: env(import.meta.env.VITE_BRAND_THEME, 'dark') === 'light' ? 'light' : 'dark',
+  theme: env(import.meta.env.VITE_BRAND_THEME, 'light') === 'dark' ? 'dark' : 'light',
 } as const;
 
-/** Raw hex values. Charts (Recharts) need real colours, not CSS variables. */
+/**
+ * Raw hex values. Charts (Recharts) need real colours, not CSS variables.
+ *
+ * Light palette keeping the original identity: the rouge laque is unchanged,
+ * and the "riz" off-white that used to be the text colour is now the page
+ * background — the dark ink is the old card colour. Swapping the roles this
+ * way keeps the brand recognisable instead of inventing a second palette.
+ */
 export const BRAND_COLORS = {
   primary: env(import.meta.env.VITE_COLOR_PRIMARY, '#D72638'),
-  bg: env(import.meta.env.VITE_COLOR_BG, '#0F0F10'),
-  card: env(import.meta.env.VITE_COLOR_CARD, '#1A1A1D'),
-  text: env(import.meta.env.VITE_COLOR_TEXT, '#F5F1EA'),
-  textMuted: env(import.meta.env.VITE_COLOR_TEXT_MUTED, '#9A948C'),
-  border: env(import.meta.env.VITE_COLOR_BORDER, '#2A2A2E'),
+  bg: env(import.meta.env.VITE_COLOR_BG, '#F5F1EA'),
+  card: env(import.meta.env.VITE_COLOR_CARD, '#FFFFFF'),
+  text: env(import.meta.env.VITE_COLOR_TEXT, '#1A1A1D'),
+  textMuted: env(import.meta.env.VITE_COLOR_TEXT_MUTED, '#6E6862'),
+  border: env(import.meta.env.VITE_COLOR_BORDER, '#E3DCD1'),
+} as const;
+
+/** True when the palette is light — drives every surface effect below. */
+const IS_LIGHT = BRAND.theme === 'light';
+
+/**
+ * Translucent overlay that reads correctly on either theme: dark ink on a
+ * light UI, white haze on a dark one. Used for row hovers, chart grid lines
+ * and shadows, which would otherwise be invisible after a theme flip.
+ */
+export function overlay(alpha: number): string {
+  return IS_LIGHT ? `rgba(0, 0, 0, ${alpha})` : `rgba(255, 255, 255, ${alpha})`;
+}
+
+/** Colours Recharts needs as literals — it cannot read CSS variables. */
+export const CHART_SURFACE = {
+  grid: overlay(IS_LIGHT ? 0.08 : 0.06),
+  axis: BRAND_COLORS.textMuted,
+  tooltipBg: BRAND_COLORS.card,
+  tooltipBorder: overlay(IS_LIGHT ? 0.12 : 0.08),
+  tooltipText: BRAND_COLORS.text,
+  /** Ring around the hovered point — matches the surface behind the chart. */
+  dotStroke: BRAND_COLORS.card,
 } as const;
 
 /**
@@ -184,7 +214,10 @@ export function applyBrandTheme(): void {
   set('accent-foreground', contrastOn(c.primary));
 
   set('border', c.border);
-  set('input', raise(c.card, 0.06));
+  // `--input` is consumed as a BORDER (`border-input` on inputs and outline
+  // buttons), not as a fill — deriving it from the card would make inputs
+  // borderless on a light theme.
+  set('input', c.border);
   set('ring', c.primary);
 
   set('chart-1', CHART_PALETTE[0]);
@@ -192,6 +225,23 @@ export function applyBrandTheme(): void {
   set('chart-3', CHART_PALETTE[2]);
   set('chart-4', CHART_PALETTE[3]);
   set('chart-5', CHART_PALETTE[4]);
+
+  // Surface effects that Tailwind reads through arbitrary values, e.g.
+  // `hover:bg-[var(--hover-overlay)]`. Kept as CSS variables so a theme flip
+  // needs no component edits.
+  root.style.setProperty('--hover-overlay', overlay(isLight ? 0.035 : 0.02));
+  root.style.setProperty('--subtle-overlay', overlay(isLight ? 0.05 : 0.05));
+  root.style.setProperty('--scrollbar-thumb', overlay(isLight ? 0.16 : 0.08));
+  root.style.setProperty('--scrollbar-thumb-hover', overlay(isLight ? 0.28 : 0.18));
+  root.style.setProperty('--overlay-scrim', overlay(isLight ? 0.35 : 0.7));
+  root.style.setProperty(
+    '--shadow-card',
+    isLight ? '0 4px 24px rgba(26, 26, 29, 0.07)' : '0 4px 24px rgba(0, 0, 0, 0.18)',
+  );
+  root.style.setProperty(
+    '--shadow-popover',
+    isLight ? '0 18px 60px rgba(26, 26, 29, 0.14)' : '0 18px 60px rgba(0, 0, 0, 0.5)',
+  );
 
   root.classList.toggle('dark', !isLight);
   root.style.colorScheme = isLight ? 'light' : 'dark';

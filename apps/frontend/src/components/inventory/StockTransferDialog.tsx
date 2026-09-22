@@ -127,7 +127,7 @@ export function StockTransferDialog({ open, onOpenChange, line, periodId, branch
             </div>
             <div className="flex justify-between py-1 text-muted-foreground">
               <span>Transferts :</span>
-              <span className={cn('tabular-nums', transferNetQty > 0 ? 'text-emerald-500' : transferNetQty < 0 ? 'text-amber-500' : '')}>
+              <span className={cn('tabular-nums', transferNetQty > 0 ? 'text-emerald-500' : transferNetQty < 0 ? 'text-amber-600' : '')}>
                 {transferNetQty > 0 ? '+' : ''}{formatNumber(transferNetQty, 2)} {unit}
               </span>
             </div>

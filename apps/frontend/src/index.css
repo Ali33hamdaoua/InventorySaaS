@@ -29,45 +29,54 @@ input[type='number'] {
    colour flash between the HTML parse and the bundle executing.
 
      - Primary      #D72638  (rouge laque)
-     - Page bg      #0F0F10
-     - Card         #1A1A1D
-     - Foreground   #F5F1EA
-     - Muted text   #9A948C
-     - Border       #2A2A2E
+     - Page bg      #F5F1EA  (ton riz)
+     - Card         #FFFFFF
+     - Foreground   #1A1A1D
+     - Muted text   #6E6862
+     - Border       #E3DCD1
    ============================================================ */
 
 @layer base {
   :root {
-    /* DARK is the default for the demo dashboard */
-    --background: 240 3% 6%;            /* #0F0F10 */
-    --foreground: 38 35% 94%;           /* #F5F1EA */
+    /* LIGHT is the default */
+    --background: 38 35% 94%;           /* #F5F1EA */
+    --foreground: 240 5% 11%;           /* #1A1A1D */
 
-    --card: 240 5% 11%;                 /* #1A1A1D */
-    --card-foreground: 38 35% 94%;
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 240 5% 11%;
 
-    --popover: 240 4% 14%;
-    --popover-foreground: 38 35% 94%;
+    --popover: 0 0% 96%;
+    --popover-foreground: 240 5% 11%;
 
     --primary: 354 70% 50%;             /* #D72638 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 38 35% 94%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 240 5% 11%;
 
-    --muted: 240 4% 16%;
-    --muted-foreground: 34 6% 58%;      /* #9A948C */
+    --muted: 0 0% 94%;
+    --muted-foreground: 30 6% 41%;      /* #6E6862 */
 
     --accent: 354 70% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 46%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5% 17%;               /* #2A2A2E */
-    --input: 240 4% 16%;
+    --border: 37 24% 85%;               /* #E3DCD1 */
+    --input: 37 24% 85%;
     --ring: 354 70% 50%;
 
     --radius: 0.625rem;
+
+    /* Surface effects — rewritten by applyBrandTheme() per theme. */
+    --hover-overlay: rgba(0, 0, 0, 0.035);
+    --subtle-overlay: rgba(0, 0, 0, 0.05);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.16);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.28);
+    --overlay-scrim: rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 4px 24px rgba(26, 26, 29, 0.07);
+    --shadow-popover: 0 18px 60px rgba(26, 26, 29, 0.14);
 
     /* Recharts custom palette — mirrors CHART_PALETTE in lib/brand.ts */
     --chart-1: 354 70% 50%;
@@ -119,10 +128,10 @@ input[type='number'] {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--scrollbar-thumb-hover);
   }
 }

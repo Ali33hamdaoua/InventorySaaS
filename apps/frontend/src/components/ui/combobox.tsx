@@ -193,7 +193,7 @@ export function Combobox({
           role="listbox"
           className={cn(
             // Match SelectContent: same border, popover bg, big drop-shadow.
-            'absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-72 overflow-auto rounded-md border border-border/60 bg-popover p-1 text-popover-foreground shadow-[0_18px_60px_rgba(0,0,0,0.5)]',
+            'absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-72 overflow-auto rounded-md border border-border/60 bg-popover p-1 text-popover-foreground shadow-[var(--shadow-popover)]',
           )}
         >
           {filtered.length === 0 ? (

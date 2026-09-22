@@ -155,7 +155,7 @@ export function AiImportComingSoonTab() {
       {/* ===== Safety note ===== */}
       <Card className="border-emerald-500/20 bg-emerald-500/[0.04]">
         <CardContent className="flex items-start gap-3 p-5 text-sm">
-          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
           <div className="space-y-1">
             <p className="font-medium text-foreground">Aucun achat créé automatiquement</p>
             <p className="text-xs leading-relaxed text-muted-foreground">

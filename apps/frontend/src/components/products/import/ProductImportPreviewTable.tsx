@@ -52,7 +52,7 @@ export function ProductImportPreviewTable({ rows, onInactiveActionChange }: Prop
               <td className="px-2 py-2">
                 {r.data.category || <span className="text-muted-foreground">—</span>}
                 {r.matchedCategoryId && (
-                  <span className="ml-1 text-[10px] text-emerald-400">✓</span>
+                  <span className="ml-1 text-[10px] text-emerald-600">✓</span>
                 )}
               </td>
               <td className="px-2 py-2">
@@ -60,7 +60,7 @@ export function ProductImportPreviewTable({ rows, onInactiveActionChange }: Prop
                   <>
                     {r.data.supplier}
                     {r.matchedSupplierId && (
-                      <span className="ml-1 text-[10px] text-emerald-400">✓</span>
+                      <span className="ml-1 text-[10px] text-emerald-600">✓</span>
                     )}
                   </>
                 ) : (
@@ -82,7 +82,7 @@ export function ProductImportPreviewTable({ rows, onInactiveActionChange }: Prop
                   <div className="mt-1 text-[10px] text-muted-foreground">↻ Mise à jour</div>
                 )}
                 {r.status === 'INACTIVE_MATCH' && (
-                  <div className="mt-1 text-[10px] font-medium text-amber-500">
+                  <div className="mt-1 text-[10px] font-medium text-amber-600">
                     Décision requise
                   </div>
                 )}
@@ -108,7 +108,7 @@ export function ProductImportPreviewTable({ rows, onInactiveActionChange }: Prop
                 )}
                 {r.status === 'INACTIVE_MATCH' && r.inactiveMatch && (
                   <div className="space-y-1.5">
-                    <p className="text-[10px] text-amber-500">
+                    <p className="text-[10px] text-amber-600">
                       ⚠ {r.inactiveMatch.warning}
                     </p>
                     {/* Radios — décision explicite. Default = IGNORE (aligné

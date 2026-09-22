@@ -65,7 +65,7 @@ export function InventoryPeriodsTable({ periods, loading, onClose }: Props) {
                   <tr
                     key={p.id}
                     className={cn(
-                      'border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]',
+                      'border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]',
                     )}
                   >
                     <td className="px-3 py-3 font-medium">

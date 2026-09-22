@@ -324,7 +324,7 @@ export default function LaborPage() {
                     : entries.map((e) => (
                         <tr
                           key={e.id}
-                          className="border-b border-border/40 last:border-0 hover:bg-white/[0.02]"
+                          className="border-b border-border/40 last:border-0 hover:bg-[var(--hover-overlay)]"
                         >
                           <td className="whitespace-nowrap px-3 py-3 text-muted-foreground">
                             {formatBusinessDate(e.date, DATE_FORMAT_OPTS)}

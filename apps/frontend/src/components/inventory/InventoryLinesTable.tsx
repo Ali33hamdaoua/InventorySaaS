@@ -73,7 +73,7 @@ function SaveStatusCell({ status }: { status: LineSaveStatus }) {
   if (status === 'saved') {
     return (
       <span
-        className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-emerald-400"
+        className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-emerald-600"
         aria-live="polite"
       >
         <Check className="h-3 w-3" />
@@ -185,7 +185,7 @@ export const InventoryLinesTable = React.memo(function InventoryLinesTable({
                         {!l.product.isActive && (
                           <Badge
                             variant="outline"
-                            className="shrink-0 border-amber-500/40 bg-amber-500/10 px-1.5 py-0 text-[9px] text-amber-500"
+                            className="shrink-0 border-amber-500/40 bg-amber-500/10 px-1.5 py-0 text-[9px] text-amber-600"
                             title="Produit désactivé — reste visible dans l'historique."
                           >
                             Inactif
@@ -217,7 +217,7 @@ export const InventoryLinesTable = React.memo(function InventoryLinesTable({
                         if (net === 0) return '0';
                         return (
                           <span
-                            className={cn(net > 0 ? 'text-emerald-500' : 'text-amber-500')}
+                            className={cn(net > 0 ? 'text-emerald-500' : 'text-amber-600')}
                             title={`Entrées : ${toNumber(l.transferInQuantity)}\nSorties : ${toNumber(l.transferOutQuantity)}\nNet : ${net > 0 ? '+' : ''}${net}`}
                           >
                             {net > 0 ? '+' : ''}{net}

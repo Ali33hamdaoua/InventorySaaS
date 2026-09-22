@@ -367,7 +367,7 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Frais supplémentaires</span>
-                  <span className="tabular-nums text-amber-500">{currency.format(acTotal)}</span>
+                  <span className="tabular-nums text-amber-600">{currency.format(acTotal)}</span>
                 </div>
                 <div className="flex items-center justify-between border-t border-primary/20 pt-2">
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">

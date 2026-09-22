@@ -81,7 +81,7 @@ function Stat({
 }) {
   const toneClasses: Record<string, string> = {
     neutral: 'text-foreground',
-    success: 'text-emerald-400',
+    success: 'text-emerald-600',
     warning: 'text-amber-400',
     danger: 'text-destructive',
     primary: 'text-primary',

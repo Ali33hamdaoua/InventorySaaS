@@ -115,7 +115,7 @@ export function ProductTable({
                   <tr
                     key={p.id}
                     className={cn(
-                      'border-b border-border/40 transition-colors last:border-0 hover:bg-white/[0.02]',
+                      'border-b border-border/40 transition-colors last:border-0 hover:bg-[var(--hover-overlay)]',
                       !p.isActive && 'opacity-60',
                     )}
                   >
@@ -194,7 +194,7 @@ export function ProductTable({
                           onClick={() => onToggleStatus(p)}
                           className={cn(
                             'gap-1.5',
-                            p.isActive ? 'hover:text-destructive' : 'hover:text-emerald-400',
+                            p.isActive ? 'hover:text-destructive' : 'hover:text-emerald-600',
                           )}
                           aria-label={p.isActive ? `Désactiver ${p.name}` : `Réactiver ${p.name}`}
                         >

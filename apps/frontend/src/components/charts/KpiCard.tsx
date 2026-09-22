@@ -21,9 +21,9 @@ interface KpiCardProps {
 }
 
 const polarityClass: Record<DeltaPolarity, string> = {
-  positive: 'text-emerald-400 bg-emerald-500/10',
+  positive: 'text-emerald-600 bg-emerald-500/10',
   negative: 'text-destructive bg-destructive/10',
-  neutral: 'text-muted-foreground bg-white/5',
+  neutral: 'text-muted-foreground bg-[var(--subtle-overlay)]',
 };
 
 const polarityIcon: Record<DeltaPolarity, React.ReactNode> = {
