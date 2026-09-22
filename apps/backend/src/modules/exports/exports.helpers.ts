@@ -115,6 +115,13 @@ const DATE = new Intl.DateTimeFormat(LOCALE, {
   year: 'numeric',
 });
 
+/**
+ * ExcelJS number format for money cells. The symbol is embedded in the format
+ * string so Excel keeps the cell numeric (sortable, summable) instead of
+ * storing pre-formatted text.
+ */
+export const CURRENCY_NUM_FMT = `#,##0.00 "${CURRENCY_SYMBOL}"`;
+
 export function fmtCurrency(v: unknown): string {
   const n = Number(v ?? 0);
   return Number.isFinite(n) ? `${AMOUNT.format(n)} ${CURRENCY_SYMBOL}` : '—';

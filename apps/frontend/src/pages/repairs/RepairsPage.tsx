@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Wrench, Wand2 } from 'lucide-react';
-import { REPAIR_STATUS_LABEL, TPS_RATE, TVQ_RATE, type RepairStatus } from '@inventorymdb/shared';
+import { Plus, Pencil, Trash2, Wrench } from 'lucide-react';
+import { REPAIR_STATUS_LABEL, type RepairStatus } from '@inventorymdb/shared';
 import {
   repairsService,
   type RepairEntry,
@@ -58,8 +58,6 @@ interface FormState {
   equipment: string;
   vendorName: string;
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
   status: RepairStatus;
   notes: string;
 }
@@ -71,8 +69,6 @@ function emptyForm(): FormState {
     equipment: '',
     vendorName: '',
     amountBeforeTax: '0',
-    tpsAmount: '0',
-    tvqAmount: '0',
     status: 'PLANNED',
     notes: '',
   };
@@ -136,8 +132,6 @@ export default function RepairsPage() {
         equipment: editing.equipment ?? '',
         vendorName: editing.vendorName ?? '',
         amountBeforeTax: editing.amountBeforeTax,
-        tpsAmount: editing.tpsAmount,
-        tvqAmount: editing.tvqAmount,
         status: editing.status,
         notes: editing.notes ?? '',
       });
@@ -146,13 +140,7 @@ export default function RepairsPage() {
     }
   }, [formOpen, editing]);
 
-  const previewTotal =
-    toNumber(form.amountBeforeTax) + toNumber(form.tpsAmount) + toNumber(form.tvqAmount);
-
-  const suggestTps = () =>
-    setForm({ ...form, tpsAmount: (toNumber(form.amountBeforeTax) * TPS_RATE).toFixed(2) });
-  const suggestTvq = () =>
-    setForm({ ...form, tvqAmount: (toNumber(form.amountBeforeTax) * TVQ_RATE).toFixed(2) });
+  const previewTotal = toNumber(form.amountBeforeTax);
 
   const saveMutation = useMutation({
     mutationFn: () => {
@@ -162,8 +150,6 @@ export default function RepairsPage() {
         equipment: form.equipment.trim() || null,
         vendorName: form.vendorName.trim() || null,
         amountBeforeTax: toNumber(form.amountBeforeTax),
-        tpsAmount: toNumber(form.tpsAmount),
-        tvqAmount: toNumber(form.tvqAmount),
         status: form.status,
         notes: form.notes.trim() || null,
         ...(editing ? {} : { branchId: branchId ?? undefined }),
@@ -225,7 +211,7 @@ export default function RepairsPage() {
             <span className="text-primary">{branch?.name ?? 'Succursale'}</span>
           </h1>
           <p className="text-sm text-muted-foreground">
-            Suivi des interventions techniques. Total = HT + TPS + TVQ (recalculé serveur).
+            Suivi des interventions techniques.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -348,9 +334,6 @@ export default function RepairsPage() {
                     <th className="px-3 pb-2 font-medium">Titre</th>
                     <th className="hidden px-3 pb-2 font-medium md:table-cell">Équipement</th>
                     <th className="hidden px-3 pb-2 font-medium lg:table-cell">Fournisseur</th>
-                    <th className="px-3 pb-2 text-right font-medium">HT</th>
-                    <th className="hidden px-3 pb-2 text-right font-medium md:table-cell">TPS</th>
-                    <th className="hidden px-3 pb-2 text-right font-medium md:table-cell">TVQ</th>
                     <th className="px-3 pb-2 text-right font-medium">Total</th>
                     <th className="px-3 pb-2 text-right">
                       <span className="sr-only">Actions</span>
@@ -361,7 +344,7 @@ export default function RepairsPage() {
                   {entriesQuery.isLoading
                     ? Array.from({ length: 4 }).map((_, i) => (
                         <tr key={i} className="border-b border-border/40">
-                          {Array.from({ length: 10 }).map((__, j) => (
+                          {Array.from({ length: 8 }).map((__, j) => (
                             <td key={j} className="px-3 py-3">
                               <Skeleton className="h-4 w-3/4" />
                             </td>
@@ -387,15 +370,6 @@ export default function RepairsPage() {
                           </td>
                           <td className="hidden max-w-[160px] truncate px-3 py-3 text-muted-foreground lg:table-cell">
                             {e.vendorName ?? '—'}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
-                            {currency.format(toNumber(e.amountBeforeTax))}
-                          </td>
-                          <td className="hidden whitespace-nowrap px-3 py-3 text-right tabular-nums text-muted-foreground md:table-cell">
-                            {currency.format(toNumber(e.tpsAmount))}
-                          </td>
-                          <td className="hidden whitespace-nowrap px-3 py-3 text-right tabular-nums text-muted-foreground md:table-cell">
-                            {currency.format(toNumber(e.tvqAmount))}
                           </td>
                           <td className="whitespace-nowrap px-3 py-3 text-right font-medium tabular-nums">
                             {currency.format(toNumber(e.totalAmount))}
@@ -443,7 +417,7 @@ export default function RepairsPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Modifier la réparation' : 'Nouvelle réparation'}</DialogTitle>
             <DialogDescription>
-              Total = HT + TPS + TVQ. Cliquez sur la baguette pour proposer 5 % / 9,975 %.
+              Saisissez le montant de l'intervention.
             </DialogDescription>
           </DialogHeader>
 
@@ -517,57 +491,7 @@ export default function RepairsPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="rep-tps">TPS</Label>
-              <div className="flex gap-1">
-                <Input
-                  id="rep-tps"
-                  type="text"
-                  inputMode="decimal"
-                  value={form.tpsAmount}
-                  onChange={(e) =>
-                    setForm({ ...form, tpsAmount: parseDecimalInput(e.target.value) })
-                  }
-                  className="text-right tabular-nums"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={suggestTps}
-                  title="Proposer 5 % du HT"
-                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-primary"
-                >
-                  <Wand2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="rep-tvq">TVQ</Label>
-              <div className="flex gap-1">
-                <Input
-                  id="rep-tvq"
-                  type="text"
-                  inputMode="decimal"
-                  value={form.tvqAmount}
-                  onChange={(e) =>
-                    setForm({ ...form, tvqAmount: parseDecimalInput(e.target.value) })
-                  }
-                  className="text-right tabular-nums"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={suggestTvq}
-                  title="Proposer 9,975 % du HT"
-                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-primary"
-                >
-                  <Wand2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Total TTC</Label>
+              <Label>Total</Label>
               <div className="flex h-9 items-center justify-end rounded-md border border-border/60 bg-background px-3 text-right text-sm font-semibold tabular-nums text-primary">
                 {currency.format(previewTotal)}
               </div>

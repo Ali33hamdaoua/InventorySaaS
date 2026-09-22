@@ -26,6 +26,7 @@ import {
   fmtNumber,
   fmtPct,
   renderPdfFromHtml,
+  CURRENCY_NUM_FMT,
 } from './exports.helpers';
 import { BRAND_NAME, APP_NAME, BRAND_PRIMARY_COLOR, BRAND_PRIMARY_ARGB, exportFooter } from '../../common/config/brand';
 
@@ -264,7 +265,7 @@ export class ExportsService {
           {
             header: 'Total acheté',
             value: (s) => Number(s.totalPurchasedAmount ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
@@ -324,8 +325,6 @@ export class ExportsService {
       id: string;
       purchaseDate: Date;
       subtotalHT: { toString(): string };
-      tpsAmount: { toString(): string };
-      tvqAmount: { toString(): string };
       totalAmount: { toString(): string };
       note: string | null;
       supplier?: { name?: string };
@@ -336,7 +335,7 @@ export class ExportsService {
       }>;
     }>;
 
-    const sumDec = (key: 'subtotalHT' | 'tpsAmount' | 'tvqAmount' | 'totalAmount') =>
+    const sumDec = (key: 'subtotalHT' | 'totalAmount') =>
       rows.reduce((s, p) => s + Number(p[key].toString()), 0);
 
     // Sommes par achat des frais supplémentaires (essence/livraison/…).
@@ -384,49 +383,35 @@ export class ExportsService {
           {
             header: 'Sous-total HT',
             value: (p) => Number(p.subtotalHT.toString()),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
           {
-            header: 'TPS',
-            value: (p) => Number(p.tpsAmount.toString()),
-            numFmt: '#,##0.00 "$"',
-            alignment: { horizontal: 'right' },
-            width: 12,
-          },
-          {
-            header: 'TVQ',
-            value: (p) => Number(p.tvqAmount.toString()),
-            numFmt: '#,##0.00 "$"',
-            alignment: { horizontal: 'right' },
-            width: 12,
-          },
-          {
             header: 'Total produits TTC',
             value: (p) => Number(p.totalAmount.toString()),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
           {
             header: 'Frais HT',
             value: (p) => acHT(p),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 12,
           },
           {
             header: 'Frais TTC',
             value: (p) => acTTC(p),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 12,
           },
           {
             header: 'Total facture TTC',
             value: (p) => invoiceTotal(p),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
@@ -452,17 +437,7 @@ export class ExportsService {
           align: 'right',
         },
         {
-          header: 'TPS',
-          value: (p) => fmtCurrency(p.tpsAmount.toString()),
-          align: 'right',
-        },
-        {
-          header: 'TVQ',
-          value: (p) => fmtCurrency(p.tvqAmount.toString()),
-          align: 'right',
-        },
-        {
-          header: 'Produits TTC',
+          header: 'Produits',
           value: (p) => fmtCurrency(p.totalAmount.toString()),
           align: 'right',
         },
@@ -487,8 +462,6 @@ export class ExportsService {
         label: `Totaux (${rows.length} achat${rows.length > 1 ? 's' : ''})`,
         cells: [
           fmtCurrency(sumDec('subtotalHT')),
-          fmtCurrency(sumDec('tpsAmount')),
-          fmtCurrency(sumDec('tvqAmount')),
           fmtCurrency(sumDec('totalAmount')),
           fmtCurrency(sumAdditionalHT),
           fmtCurrency(sumAdditionalTTC),
@@ -527,21 +500,21 @@ export class ExportsService {
           {
             header: 'Valeur début',
             value: (p) => Number(p.openingValue ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
           {
             header: 'Achats',
             value: (p) => Number(p.purchasesValue ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
           {
             header: 'Valeur fin',
             value: (p) => Number(p.closingValue ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
@@ -551,28 +524,28 @@ export class ExportsService {
           {
             header: 'Food cost',
             value: (p) => Number(p.foodCost ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
           {
             header: 'Paper cost',
             value: (p) => Number(p.paperCost ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
           {
             header: 'Cleaning cost',
             value: (p) => Number(p.cleaningCost ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
           {
             header: 'Real cost',
             value: (p) => Number(p.realCost ?? 0),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
@@ -702,7 +675,7 @@ export class ExportsService {
           {
             header: 'Achats valeur',
             value: (l) => Number(l.purchasesValue),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
@@ -730,7 +703,7 @@ export class ExportsService {
           {
             header: 'Consommation valeur',
             value: (l) => Number(l.consumptionValue),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 16,
           },
@@ -922,11 +895,9 @@ export class ExportsService {
     const totals = rows.reduce(
       (acc, r) => ({
         ht: acc.ht + Number(r.amountBeforeTax.toString()),
-        tps: acc.tps + Number(r.tpsAmount.toString()),
-        tvq: acc.tvq + Number(r.tvqAmount.toString()),
         total: acc.total + Number(r.totalAmount.toString()),
       }),
-      { ht: 0, tps: 0, tvq: 0, total: 0 },
+      { ht: 0, total: 0 },
     );
 
     if (format === 'excel') {
@@ -984,28 +955,14 @@ export class ExportsService {
           {
             header: 'Montant HT',
             value: (r) => Number(r.amountBeforeTax.toString()),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
           {
-            header: 'TPS',
-            value: (r) => Number(r.tpsAmount.toString()),
-            numFmt: '#,##0.00 "$"',
-            alignment: { horizontal: 'right' },
-            width: 12,
-          },
-          {
-            header: 'TVQ',
-            value: (r) => Number(r.tvqAmount.toString()),
-            numFmt: '#,##0.00 "$"',
-            alignment: { horizontal: 'right' },
-            width: 12,
-          },
-          {
             header: 'Total TTC',
             value: (r) => Number(r.totalAmount.toString()),
-            numFmt: '#,##0.00 "$"',
+            numFmt: CURRENCY_NUM_FMT,
             alignment: { horizontal: 'right' },
             width: 14,
           },
@@ -1042,17 +999,7 @@ export class ExportsService {
           align: 'right',
         },
         {
-          header: 'TPS',
-          value: (r) => fmtCurrency(r.tpsAmount.toString()),
-          align: 'right',
-        },
-        {
-          header: 'TVQ',
-          value: (r) => fmtCurrency(r.tvqAmount.toString()),
-          align: 'right',
-        },
-        {
-          header: 'TTC',
+          header: 'Total',
           value: (r) => fmtCurrency(r.totalAmount.toString()),
           align: 'right',
         },
@@ -1062,8 +1009,6 @@ export class ExportsService {
         label: `Totaux (${rows.length} dépense${rows.length > 1 ? 's' : ''})`,
         cells: [
           fmtCurrency(totals.ht),
-          fmtCurrency(totals.tps),
-          fmtCurrency(totals.tvq),
           fmtCurrency(totals.total),
         ],
       },
@@ -1132,8 +1077,8 @@ export class ExportsService {
 
     // ----- Sheet 3: Expenses -----
     // NOTE LOT 2 : les catégories comptables du rapport sont désormais
-    // sommées HT (hors taxes). La section Comptabilité conserve HT/TPS/
-    // TVQ/TTC en détail — le rapport financier ne consomme que le HT.
+    // sommées sur leur montant HT — le rapport financier ne consomme que
+    // cette colonne.
     const exp = wb.addWorksheet('Dépenses');
     exp.columns = [{ width: 32 }, { width: 18 }, { width: 14 }];
     addTitle(exp, `Dépenses (HT) — ${monthLabel}`, 'A1:C1');
@@ -1217,7 +1162,6 @@ export class ExportsService {
   </table>
 
   <h2>Dépenses (HT)</h2>
-  <p class="src" style="margin: 0 0 8px 0;">Les dépenses comptables sont présentées hors taxes. TPS et TVQ restent visibles dans la section Comptabilité.</p>
   <table>
     <tr><th>Catégorie</th><th>Source</th><th class="num">Montant (HT)</th></tr>
     <tr><td>Food cost</td><td class="src">Inventaire</td><td class="num">${fmtCurrency(r.foodCost)}</td></tr>

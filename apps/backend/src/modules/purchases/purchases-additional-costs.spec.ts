@@ -6,7 +6,7 @@
  *   2  Purchase avec Essence HT 40 : crée bien un PurchaseAdditionalCost.
  *   3  Le mirror AccountingExpense est créé (1 par frais).
  *   4  Le mirror porte `amountBeforeTax` = HT du frais.
- *   5  Le mirror porte `totalAmount` = HT + TPS + TVQ (arrondi cents).
+ *   5  Le mirror porte `totalAmount` = HT (arrondi cents).
  *   6  Le mirror est `includeInFinancialReports: true`.
  *   7  Le mirror utilise `sourceType = PURCHASE_ADDITIONAL_COST` (donc
  *      inclus dans le rapport financier — filtre n'exclut que PURCHASE).
@@ -20,7 +20,7 @@
  *  11  Suppression d'un frais (envoi d'un tableau vide en UPDATE) : delete
  *      appelé, aucun create.
  *  12  Catégorie comptable inexistante → 400 avant toute écriture.
- *  13  L'invariant HT + TPS + TVQ = TTC est respecté (2 déc).
+ *  13  L'invariant totalAmount = HT est respecté (2 déc).
  */
 import { BadRequestException } from '@nestjs/common';
 import { AccountingSourceType, Prisma } from '@prisma/client';
@@ -113,8 +113,6 @@ function createdPurchaseFixture(overrides: Record<string, unknown> = {}) {
     supplierId: 's-1',
     purchaseDate: new Date('2026-08-01'),
     subtotalHT: new Prisma.Decimal(200),
-    tpsAmount: new Prisma.Decimal(0),
-    tvqAmount: new Prisma.Decimal(0),
     totalAmount: new Prisma.Decimal(200),
     note: null,
     createdAt: new Date(),
@@ -139,8 +137,6 @@ const baseCreateDto = {
   branchId: 'b-1',
   supplierId: 's-1',
   purchaseDate: new Date('2026-08-01'),
-  tpsAmount: 0,
-  tvqAmount: 0,
   items: [{ productId: 'p-1', quantity: 1, unitPrice: 200 }],
 };
 
@@ -164,7 +160,7 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
       expect(prisma.accountingExpense.create).toHaveBeenCalledTimes(1);
     });
 
-    it('2, 3, 4, 5, 6, 7. Un frais Essence HT 40 TPS 2 TVQ 3.99 crée les 2 rows attendues', async () => {
+    it('2, 3, 4, 5, 6, 7. Un frais Essence de 40 crée les 2 rows attendues', async () => {
       const prisma = buildPrismaMock();
       prisma.purchase.create.mockResolvedValue(createdPurchaseFixture());
       prisma.purchase.findUnique.mockResolvedValue(createdPurchaseFixture());
@@ -179,8 +175,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
               costType: 'ESSENCE',
               accountingCategoryId: 'ac-fuel',
               amountBeforeTax: 40,
-              tpsAmount: 2,
-              tvqAmount: 3.99,
             },
           ],
         },
@@ -193,10 +187,8 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
       expect(pacCall.data.costType).toBe('ESSENCE');
       expect(pacCall.data.accountingCategoryId).toBe('ac-fuel');
       expect(pacCall.data.amountBeforeTax).toEqual(new Prisma.Decimal(40));
-      expect(pacCall.data.tpsAmount).toEqual(new Prisma.Decimal(2));
-      expect(pacCall.data.tvqAmount).toEqual(new Prisma.Decimal(3.99));
-      // 5. TTC = HT + TPS + TVQ (arrondi cents)
-      expect(pacCall.data.totalAmount).toEqual(new Prisma.Decimal(45.99));
+      // 5. total = HT (arrondi cents)
+      expect(pacCall.data.totalAmount).toEqual(new Prisma.Decimal(40));
 
       // 3. Un mirror AccountingExpense en plus (2 appels au total = mirror
       //    principal PURCHASE + mirror du frais).
@@ -211,8 +203,8 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
 
       // 4. Le mirror porte le HT
       expect((feeMirror!.amountBeforeTax as Prisma.Decimal).toString()).toBe('40');
-      // 5. Le mirror porte le TTC
-      expect((feeMirror!.totalAmount as Prisma.Decimal).toString()).toBe('45.99');
+      // 5. Le mirror porte le total
+      expect((feeMirror!.totalAmount as Prisma.Decimal).toString()).toBe('40');
       // 6. Inclus dans le rapport financier
       expect(feeMirror!.includeInFinancialReports).toBe(true);
       // 7. sourceType distinct de PURCHASE → INCLUS par le filtre
@@ -239,8 +231,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
               costType: 'ESSENCE',
               accountingCategoryId: 'ac-fuel',
               amountBeforeTax: 40,
-              tpsAmount: 2,
-              tvqAmount: 3.99,
             },
           ],
         },
@@ -256,7 +246,7 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
       expect(purchaseMirror).toBeDefined();
       // Règle anti-double-comptage : ne DOIT pas être inclus dans le rapport.
       expect(purchaseMirror!.includeInFinancialReports).toBe(false);
-      // Porte le HT/TPS/TVQ/TTC de la Purchase (produits seuls).
+      // Porte le HT/total de la Purchase (produits seuls).
       expect((purchaseMirror!.amountBeforeTax as Prisma.Decimal).toString()).toBe('200');
     });
 
@@ -275,8 +265,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
               costType: 'LIVRAISON',
               accountingCategoryId: 'ac-deliv',
               amountBeforeTax: 30,
-              tpsAmount: 1.5,
-              tvqAmount: 2.99,
             },
           ],
         },
@@ -306,8 +294,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
                 costType: 'ESSENCE',
                 accountingCategoryId: 'ac-inexistant',
                 amountBeforeTax: 40,
-                tpsAmount: 2,
-                tvqAmount: 3.99,
               },
             ],
           },
@@ -320,7 +306,7 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
       expect(prisma.purchaseAdditionalCost.create).not.toHaveBeenCalled();
     });
 
-    it('13. Invariant HT + TPS + TVQ = TTC préservé (arrondi 2 déc)', async () => {
+    it('13. Invariant totalAmount = HT préservé (arrondi 2 déc)', async () => {
       const prisma = buildPrismaMock();
       prisma.purchase.create.mockResolvedValue(createdPurchaseFixture());
       prisma.purchase.findUnique.mockResolvedValue(createdPurchaseFixture());
@@ -335,8 +321,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
               costType: 'PEAGE',
               accountingCategoryId: 'ac-fuel',
               amountBeforeTax: 3.33,
-              tpsAmount: 0.17,
-              tvqAmount: 0.33,
             },
           ],
         },
@@ -344,7 +328,7 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
       );
 
       const call = prisma.purchaseAdditionalCost.create.mock.calls[0][0];
-      expect((call.data.totalAmount as Prisma.Decimal).toString()).toBe('3.83');
+      expect((call.data.totalAmount as Prisma.Decimal).toString()).toBe('3.33');
     });
   });
 
@@ -378,8 +362,6 @@ describe('PurchasesService — Frais supplémentaires (V1)', () => {
               costType: 'ESSENCE',
               accountingCategoryId: 'ac-fuel',
               amountBeforeTax: 50, // nouvelle valeur
-              tpsAmount: 2.5,
-              tvqAmount: 4.99,
             },
           ],
         },

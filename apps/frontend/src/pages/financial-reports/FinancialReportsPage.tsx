@@ -526,16 +526,6 @@ function ExpenseBreakdownCard({
         </span>
       </CardHeader>
       <CardContent>
-        {/* Rappel HT — le rapport financier consomme uniquement le montant
-            hors taxes des dépenses comptables. TPS/TVQ restent visibles
-            dans la section Comptabilité. */}
-        <p
-          className="mb-3 rounded-md border border-border/40 bg-muted/20 px-3 py-2 text-[11px] text-muted-foreground"
-          title="Les dépenses comptables sont présentées hors taxes. La TPS et la TVQ restent disponibles dans la section Comptabilité."
-        >
-          Les dépenses comptables sont présentées <strong>hors taxes</strong>.
-          La TPS et la TVQ restent visibles dans la section Comptabilité.
-        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

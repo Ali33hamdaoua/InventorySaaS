@@ -288,7 +288,7 @@ export class FinancialReportsService {
       //
       // NOUVELLE RÈGLE MÉTIER (LOT 2) — On somme `amountBeforeTax` (HT)
       // et non plus `totalAmount` (TTC). La section Comptabilité continue
-      // de stocker et d'afficher HT/TPS/TVQ/TTC ; seul le rapport financier
+      // de stocker et d'afficher le montant ; seul le rapport financier
       // consomme désormais le HT pour éviter la double-imposition dans
       // les analyses de dépenses.
       //

@@ -38,7 +38,7 @@ export class PurchasesController {
   @Get('summary')
   @ApiOperation({
     summary:
-      "Stats d'achats pour la période — totaux HT/TPS/TVQ/TTC, count, top fournisseur, panier moyen. Scopable par branchId.",
+      "Stats d'achats pour la période — totaux, count, top fournisseur, panier moyen. Scopable par branchId.",
   })
   summary(@Query() q: PurchaseSummaryQueryDto, @CurrentUser() user: RequestUser) {
     return this.service.summary(q, user);

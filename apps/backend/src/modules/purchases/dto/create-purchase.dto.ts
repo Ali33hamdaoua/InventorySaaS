@@ -60,17 +60,6 @@ export class PurchaseAdditionalCostInputDto {
   @Min(0)
   amountBeforeTax!: number;
 
-  @ApiProperty({ description: 'TPS.', default: 0 })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tpsAmount!: number;
-
-  @ApiProperty({ description: 'TVQ.', default: 0 })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tvqAmount!: number;
 }
 
 export class CreatePurchaseDto {
@@ -103,26 +92,6 @@ export class CreatePurchaseDto {
   @ValidateNested({ each: true })
   @Type(() => PurchaseItemDto)
   items!: PurchaseItemDto[];
-
-  @ApiProperty({
-    description:
-      "TPS saisie par l'utilisateur (manuel). Suggéré côté UI à 5 % du HT mais l'utilisateur peut le modifier. Backend ne valide pas le taux.",
-    default: 0,
-  })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tpsAmount!: number;
-
-  @ApiProperty({
-    description:
-      "TVQ saisie par l'utilisateur (manuel). Suggérée à 9.975 % du HT par l'UI.",
-    default: 0,
-  })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tvqAmount!: number;
 
   /** Frais supplémentaires optionnels (essence/livraison/péage/...).
    *  Chaque frais est comptabilisé séparément en dépense HT dans le

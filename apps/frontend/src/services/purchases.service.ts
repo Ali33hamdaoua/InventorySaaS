@@ -30,8 +30,6 @@ export interface PurchaseAdditionalCostPayload {
   description?: string;
   accountingCategoryId: string;
   amountBeforeTax: number;
-  tpsAmount: number;
-  tvqAmount: number;
 }
 
 export interface PurchasePayload {
@@ -40,9 +38,6 @@ export interface PurchasePayload {
   purchaseDate: string; // ISO yyyy-mm-dd
   note?: string | null;
   items: PurchaseItemPayload[];
-  /** Manual entry — backend sums HT + TPS + TVQ, no rate enforcement. */
-  tpsAmount: number;
-  tvqAmount: number;
   /** Frais supplémentaires optionnels. `undefined` = ne rien changer,
    *  `[]` = effacer tous les frais existants. */
   additionalCosts?: PurchaseAdditionalCostPayload[];

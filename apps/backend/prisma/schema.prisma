@@ -96,7 +96,7 @@ enum FinancialReportStatus {
 ///   MANUAL   — created via the Accounting page form.
 ///   PURCHASE — auto-generated 1-to-1 from a Purchase when the Purchase is
 ///              created/updated. The whole purchase becomes a single
-///              accounting row (header totals — HT/TPS/TVQ). Not editable
+///              accounting row (header total). Not editable
 ///              in Accounting; modify the source Purchase to change values.
 enum AccountingSourceType {
   MANUAL
@@ -264,9 +264,9 @@ model InventoryProduct {
 
 /// A supplier purchase. Totals are recomputed server-side on every write:
 ///   subtotalHT  = Σ (line.quantity × line.unitPrice)
-///   tpsAmount   = subtotalHT × 0.05      (Canada federal 5%)
-///   tvqAmount   = subtotalHT × 0.09975   (Quebec provincial 9.975%)
-///   totalAmount = subtotalHT + tpsAmount + tvqAmount
+///   totalAmount = subtotalHT
+/// Sales taxes (TPS/TVQ) were removed when the product moved to Morocco —
+/// amounts are carried as a single figure with no tax breakdown.
 /// `invoiceNumber` is intentionally absent — the client identifies a
 /// purchase by date + supplier, not by an external reference. There is
 /// no longer any "cancelled" / "validated" concept — an erroneous
@@ -277,8 +277,6 @@ model Purchase {
   supplierId   String   @db.Uuid
   purchaseDate DateTime @db.Date
   subtotalHT   Decimal  @default(0) @db.Decimal(14, 2)
-  tpsAmount    Decimal  @default(0) @db.Decimal(14, 2)
-  tvqAmount    Decimal  @default(0) @db.Decimal(14, 2)
   totalAmount  Decimal  @default(0) @db.Decimal(14, 2)
   note         String?  @db.VarChar(500)
   createdAt    DateTime @default(now())
@@ -321,8 +319,6 @@ model PurchaseAdditionalCost {
   description          String? @db.VarChar(500)
   accountingCategoryId String  @db.Uuid
   amountBeforeTax      Decimal @default(0) @db.Decimal(14, 2)
-  tpsAmount            Decimal @default(0) @db.Decimal(14, 2)
-  tvqAmount            Decimal @default(0) @db.Decimal(14, 2)
   totalAmount          Decimal @default(0) @db.Decimal(14, 2)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
@@ -436,11 +432,10 @@ model InventoryReport {
 /// Monthly accountant-facing expense.
 ///
 /// Two origins (see `sourceType`):
-///   MANUAL        — created via the Accounting form. User enters HT, TPS,
-///                   TVQ explicitly; backend just sums (no rate enforcement).
+///   MANUAL        — created via the Accounting form. User enters a single
+///                   amount; backend mirrors it into `totalAmount`.
 ///   PURCHASE_ITEM — auto-generated 1-to-1 from a PurchaseItem when the
-///                   parent Purchase is created/updated. TPS/TVQ are
-///                   allocated proportionally from the purchase header.
+///                   parent Purchase is created/updated.
 ///                   Not editable in the Accounting UI; updating the source
 ///                   Purchase re-syncs the linked row.
 ///
@@ -498,8 +493,6 @@ model AccountingExpense {
   referenceNumber String?         @db.VarChar(80)
   paymentMethod   PaymentMethod?
   amountBeforeTax Decimal         @default(0) @db.Decimal(14, 2)
-  tpsAmount       Decimal         @default(0) @db.Decimal(14, 2)
-  tvqAmount       Decimal         @default(0) @db.Decimal(14, 2)
   totalAmount     Decimal         @default(0) @db.Decimal(14, 2)
   notes           String?         @db.VarChar(1000)
 
@@ -663,7 +656,7 @@ enum RepairStatus {
 }
 
 /// One repair entry = one event (date × equipment × vendor × cost).
-/// `totalAmount` is recomputed server-side from `amountBeforeTax + tps + tvq`.
+/// `totalAmount` is recomputed server-side and equals `amountBeforeTax`.
 model RepairEntry {
   id              String       @id @default(uuid()) @db.Uuid
   branchId        String       @db.Uuid
@@ -672,8 +665,6 @@ model RepairEntry {
   equipment       String?      @db.VarChar(150)
   vendorName      String?      @db.VarChar(150)
   amountBeforeTax Decimal      @default(0) @db.Decimal(14, 2)
-  tpsAmount       Decimal      @default(0) @db.Decimal(14, 2)
-  tvqAmount       Decimal      @default(0) @db.Decimal(14, 2)
   totalAmount     Decimal      @default(0) @db.Decimal(14, 2)
   status          RepairStatus @default(PLANNED)
   notes           String?      @db.Text

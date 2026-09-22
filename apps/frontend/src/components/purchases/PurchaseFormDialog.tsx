@@ -74,8 +74,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
   const [items, setItems] = useState<DraftItem[]>([
     { productId: '', quantity: '1', unitPrice: '0' },
   ]);
-  const [tpsInput, setTpsInput] = useState<string>('0');
-  const [tvqInput, setTvqInput] = useState<string>('0');
   const [additionalCosts, setAdditionalCosts] = useState<AdditionalCostDraft[]>([]);
   const [errors, setErrors] = useState<Errors>({});
 
@@ -104,8 +102,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
             }))
           : [{ productId: '', quantity: '1', unitPrice: '0' }],
       );
-      setTpsInput(String(toNumber(purchase.tpsAmount)));
-      setTvqInput(String(toNumber(purchase.tvqAmount)));
       // Frais existants → drafts. String pour permettre la saisie.
       setAdditionalCosts(
         (purchase.additionalCosts ?? []).map((c) => ({
@@ -113,8 +109,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
           description: c.description ?? '',
           accountingCategoryId: c.accountingCategoryId,
           amountBeforeTax: String(toNumber(c.amountBeforeTax)),
-          tpsAmount: String(toNumber(c.tpsAmount)),
-          tvqAmount: String(toNumber(c.tvqAmount)),
         })),
       );
     } else {
@@ -122,8 +116,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
       setPurchaseDate(todayInputValue());
       setNote('');
       setItems([{ productId: '', quantity: '1', unitPrice: '0' }]);
-      setTpsInput('0');
-      setTvqInput('0');
       setAdditionalCosts([]);
     }
     setErrors({});
@@ -152,23 +144,16 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
 
   const mutation = useMutation({
     mutationFn: async () => {
-      // Filtrer les frais valides (catégorie choisie ET montant HT > 0
-      // OU au moins une taxe non-nulle — un frais vide n'a pas de sens).
+      // Filtrer les frais valides (catégorie choisie ET montant > 0 —
+      // un frais vide n'a pas de sens).
       const validCosts = additionalCosts
         .filter((c) => c.accountingCategoryId && c.costType)
-        .filter(
-          (c) =>
-            toNumber(c.amountBeforeTax) > 0 ||
-            toNumber(c.tpsAmount) > 0 ||
-            toNumber(c.tvqAmount) > 0,
-        )
+        .filter((c) => toNumber(c.amountBeforeTax) > 0)
         .map((c) => ({
           costType: c.costType,
           description: c.description.trim() || undefined,
           accountingCategoryId: c.accountingCategoryId,
           amountBeforeTax: toNumber(c.amountBeforeTax),
-          tpsAmount: toNumber(c.tpsAmount),
-          tvqAmount: toNumber(c.tvqAmount),
         }));
 
       const payload = {
@@ -182,8 +167,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
             quantity: toNumber(i.quantity),
             unitPrice: toNumber(i.unitPrice),
           })),
-        tpsAmount: toNumber(tpsInput),
-        tvqAmount: toNumber(tvqInput),
         // Frais supplémentaires. En EDIT on envoie toujours la liste (même
         // vide) pour permettre la suppression de tous les frais. En CREATE
         // on n'envoie que si non vide.
@@ -274,8 +257,7 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
         <DialogHeader className="shrink-0 border-b border-border/60 px-6 pb-4 pt-6">
           <DialogTitle>{isEdit ? 'Modifier l\'achat' : 'Nouvel achat'}</DialogTitle>
           <DialogDescription>
-            Sous-total HT calculé depuis les lignes. TPS et TVQ saisies manuellement
-            (cliquez sur la baguette pour proposer 5 % / 9,975 %). Total TTC = HT + TPS + TVQ.
+            Le total est calculé depuis les lignes produits.
           </DialogDescription>
         </DialogHeader>
 
@@ -355,10 +337,6 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
             items={items}
             products={visibleProducts}
             onChange={setItems}
-            tpsInput={tpsInput}
-            tvqInput={tvqInput}
-            onTpsChange={setTpsInput}
-            onTvqChange={setTvqInput}
             error={errors.items}
           />
 
@@ -368,35 +346,28 @@ export function PurchaseFormDialog({ open, onOpenChange, suppliers, products, pu
             onChange={setAdditionalCosts}
           />
 
-          {/* Invoice grand total — combines products TTC + additional costs TTC.
-              Updates live when any product line, tax, or additional cost changes.
-              Does NOT affect unitPrice, defaultCost, WAC, or food cost. */}
+          {/* Invoice grand total — combines the product lines with the
+              additional costs. Updates live when either changes. Does NOT
+              affect unitPrice, defaultCost, WAC, or food cost. */}
           {additionalCosts.length > 0 && (() => {
             const liveTotals = calculatePurchaseTotals(
               items.map((i) => ({ quantity: toNumber(i.quantity), unitPrice: toNumber(i.unitPrice) })),
-              toNumber(tpsInput),
-              toNumber(tvqInput),
             );
-            const productsTTC = liveTotals.total;
-            const acTotalTTC = additionalCosts.reduce(
-              (s, c) => {
-                const ht = toNumber(c.amountBeforeTax);
-                const t1 = toNumber(c.tpsAmount);
-                const t2 = toNumber(c.tvqAmount);
-                return s + ht + t1 + t2;
-              },
+            const productsTotal = liveTotals.total;
+            const acTotal = additionalCosts.reduce(
+              (s, c) => s + toNumber(c.amountBeforeTax),
               0,
             );
-            const grand = productsTTC + acTotalTTC;
+            const grand = productsTotal + acTotal;
             return (
               <div className="rounded-md border border-primary/30 bg-primary/[0.06] p-3 space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Total produits TTC</span>
-                  <span className="tabular-nums">{currency.format(productsTTC)}</span>
+                  <span className="text-muted-foreground">Total produits</span>
+                  <span className="tabular-nums">{currency.format(productsTotal)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Frais supplémentaires TTC</span>
-                  <span className="tabular-nums text-amber-500">{currency.format(acTotalTTC)}</span>
+                  <span className="text-muted-foreground">Frais supplémentaires</span>
+                  <span className="tabular-nums text-amber-500">{currency.format(acTotal)}</span>
                 </div>
                 <div className="flex items-center justify-between border-t border-primary/20 pt-2">
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">

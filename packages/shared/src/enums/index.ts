@@ -175,7 +175,7 @@ export const FINANCIAL_REPORT_STATUS_LABEL: Record<FinancialReportStatus, string
  *  - `LABOR`     — auto-generated 1-to-1 from a `LaborEntry`. Total =
  *                  hours × hourlyRate; no taxes by default.
  *  - `REPAIR`    — auto-generated 1-to-1 from a `RepairEntry`. Carries
- *                  the HT / TPS / TVQ / total from the repair row.
+ *                  the HT / total from the repair row.
  *
  * Only MANUAL rows are fully editable. Auto rows allow notes-only edits;
  * everything else flows from the source module.

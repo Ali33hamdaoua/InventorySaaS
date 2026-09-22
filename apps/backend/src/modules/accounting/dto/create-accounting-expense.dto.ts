@@ -17,8 +17,8 @@ const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
 
 /**
- * Create an expense. V2 manual-tax workflow: the client now sends HT, TPS
- * AND TVQ explicitly — the backend just sums them (total = HT + TPS + TVQ).
+ * Create an expense. The client sends a single amount; the backend mirrors
+ * it into `totalAmount` (no sales tax — see packages/shared/src/lib/taxes.ts).
  * Rates are no longer enforced server-side; the UI pre-fills 5 % / 9.975 %
  * as a convenience but the user can override.
  */
@@ -95,26 +95,6 @@ export class CreateAccountingExpenseDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   amountBeforeTax!: number;
-
-  @ApiProperty({
-    description:
-      "TPS saisie par l'utilisateur (manuel). L'UI pré-remplit 5 % du HT mais l'utilisateur peut modifier.",
-    default: 0,
-  })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tpsAmount!: number;
-
-  @ApiProperty({
-    description:
-      "TVQ saisie par l'utilisateur (manuel). L'UI pré-remplit 9.975 % du HT mais l'utilisateur peut modifier.",
-    default: 0,
-  })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tvqAmount!: number;
 
   @ApiPropertyOptional()
   @IsOptional()

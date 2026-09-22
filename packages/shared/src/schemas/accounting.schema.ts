@@ -9,8 +9,8 @@ const paymentMethodEnum = z.enum(
 );
 
 /**
- * Create an expense. V2 manual-tax workflow: client sends HT, TPS, TVQ
- * explicitly; server just sums them (no 5 % / 9.975 % enforcement).
+ * Create an expense. The client sends a single amount; the server mirrors it
+ * into `totalAmount`. Sales taxes were removed with the move to Morocco.
  */
 export const createAccountingExpenseSchema = z
   .object({
@@ -23,8 +23,6 @@ export const createAccountingExpenseSchema = z
     referenceNumber: z.string().trim().max(80).optional().nullable(),
     paymentMethod: paymentMethodEnum.optional().nullable(),
     amountBeforeTax: z.coerce.number().nonnegative(),
-    tpsAmount: z.coerce.number().nonnegative().default(0),
-    tvqAmount: z.coerce.number().nonnegative().default(0),
     notes: z.string().trim().max(1000).optional().nullable(),
   })
   .refine((v) => !!v.supplierId || !!v.supplierName || v.category !== 'ACHATS_FOURNISSEURS', {
@@ -43,8 +41,6 @@ export const updateAccountingExpenseSchema = z.object({
   referenceNumber: z.string().trim().max(80).optional().nullable(),
   paymentMethod: paymentMethodEnum.optional().nullable(),
   amountBeforeTax: z.coerce.number().nonnegative().optional(),
-  tpsAmount: z.coerce.number().nonnegative().optional(),
-  tvqAmount: z.coerce.number().nonnegative().optional(),
   notes: z.string().trim().max(1000).optional().nullable(),
 });
 export type UpdateAccountingExpenseInput = z.infer<typeof updateAccountingExpenseSchema>;

@@ -1,4 +1,4 @@
-﻿-- CreateEnum
+-- CreateEnum
 CREATE TYPE "StockTransferStatus" AS ENUM ('COMPLETED', 'REVERSED');
 
 -- AlterEnum

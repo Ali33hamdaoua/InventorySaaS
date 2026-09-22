@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, Receipt, Percent, Layers } from 'lucide-react';
+import { Wallet, Receipt, Layers } from 'lucide-react';
 import {
   accountingService,
   type AccountingSummaryParams,
@@ -21,8 +21,8 @@ export function AccountingSummaryCards({ params }: Props) {
 
   if (summaryQ.isLoading || !summaryQ.data) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, i) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-32" />
         ))}
       </div>
@@ -31,10 +31,10 @@ export function AccountingSummaryCards({ params }: Props) {
 
   const s = summaryQ.data;
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <KpiCard
-        title={`Total TTC — ${s.selectedPeriod}`}
-        value={currency.format(s.totalWithTax)}
+        title={`Total — ${s.selectedPeriod}`}
+        value={currency.format(s.totalBeforeTax)}
         hint={
           s.expensesCount > 0
             ? `${s.expensesCount} dépense${s.expensesCount > 1 ? 's' : ''}`
@@ -44,22 +44,10 @@ export function AccountingSummaryCards({ params }: Props) {
         accent
       />
       <KpiCard
-        title="Total HT"
+        title="Total"
         value={currency.format(s.totalBeforeTax)}
-        hint="Hors taxes"
+        hint="Somme des dépenses"
         icon={<Receipt className="h-4 w-4" />}
-      />
-      <KpiCard
-        title="TPS"
-        value={currency.format(s.totalTPS)}
-        hint="Taxe fédérale collectée"
-        icon={<Percent className="h-4 w-4" />}
-      />
-      <KpiCard
-        title="TVQ"
-        value={currency.format(s.totalTVQ)}
-        hint="Taxe provinciale collectée"
-        icon={<Percent className="h-4 w-4" />}
       />
       <KpiCard
         title="Dépenses"

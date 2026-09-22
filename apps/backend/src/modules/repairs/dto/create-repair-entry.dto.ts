@@ -51,18 +51,6 @@ export class CreateRepairEntryDto {
   @Min(0)
   amountBeforeTax!: number;
 
-  @ApiProperty({ description: 'TPS saisie manuellement', default: 0 })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tpsAmount!: number;
-
-  @ApiProperty({ description: 'TVQ saisie manuellement', default: 0 })
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  tvqAmount!: number;
-
   @ApiPropertyOptional({ enum: RepairStatus, default: RepairStatus.PLANNED })
   @IsOptional()
   @IsEnum(RepairStatus)

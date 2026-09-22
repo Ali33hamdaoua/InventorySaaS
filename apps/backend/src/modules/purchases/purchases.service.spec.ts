@@ -90,8 +90,6 @@ describe('PurchasesService.create — garde-fou produit inactif', () => {
     branchId: 'b-1',
     supplierId: 's-1',
     purchaseDate: new Date('2026-08-01'),
-    tpsAmount: 0,
-    tvqAmount: 0,
     items: [{ productId: 'p-active', quantity: 1, unitPrice: 10 }],
   };
 
@@ -131,8 +129,6 @@ describe('PurchasesService.create — garde-fou produit inactif', () => {
       supplierId: 's-1',
       purchaseDate: new Date('2026-08-01'),
       subtotalHT: new Prisma.Decimal(10),
-      tpsAmount: new Prisma.Decimal(0),
-      tvqAmount: new Prisma.Decimal(0),
       totalAmount: new Prisma.Decimal(10),
       note: null,
       createdAt: new Date(),
@@ -152,8 +148,6 @@ describe('PurchasesService.create — garde-fou produit inactif', () => {
         supplierId: 's-1',
         purchaseDate: new Date('2026-08-01'),
         subtotalHT: new Prisma.Decimal(10),
-        tpsAmount: new Prisma.Decimal(0),
-        tvqAmount: new Prisma.Decimal(0),
         totalAmount: new Prisma.Decimal(10),
         note: null,
         items: [{ id: 'it-1' }],
@@ -175,8 +169,6 @@ describe('PurchasesService.update — inactif accepté pour un product déjà pr
     supplierId: 's-1',
     purchaseDate: new Date('2026-07-01'),
     subtotalHT: new Prisma.Decimal(10),
-    tpsAmount: new Prisma.Decimal(0),
-    tvqAmount: new Prisma.Decimal(0),
     totalAmount: new Prisma.Decimal(10),
     note: null,
     createdAt: new Date(),
@@ -214,8 +206,6 @@ describe('PurchasesService.update — inactif accepté pour un product déjà pr
         'pu-old',
         {
           items: [{ productId: 'p-legacy', quantity: 2, unitPrice: 10 }],
-          tpsAmount: 0,
-          tvqAmount: 0,
         },
         admin,
       ),
@@ -245,8 +235,6 @@ describe('PurchasesService.update — inactif accepté pour un product déjà pr
             { productId: 'p-legacy', quantity: 1, unitPrice: 10 },
             { productId: 'p-new-inactive', quantity: 1, unitPrice: 5 },
           ],
-          tpsAmount: 0,
-          tvqAmount: 0,
         },
         admin,
       ),
@@ -255,7 +243,7 @@ describe('PurchasesService.update — inactif accepté pour un product déjà pr
 });
 
 describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', () => {
-  it('calcule correctement invoiceGrandTotal = totalAmount + additionalCostsTotalTTC sans altérer totalAmount', async () => {
+  it('calcule correctement invoiceGrandTotal = totalAmount + additionalCostsTotal sans altérer totalAmount', async () => {
     const prisma = buildPrismaMock();
     const mockPurchaseWithCosts = {
       id: 'pu-costs-1',
@@ -263,9 +251,7 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
       supplierId: 's-1',
       purchaseDate: new Date('2026-08-15'),
       subtotalHT: new Prisma.Decimal(100.0),
-      tpsAmount: new Prisma.Decimal(5.0),
-      tvqAmount: new Prisma.Decimal(9.98),
-      totalAmount: new Prisma.Decimal(114.98), // Products TTC
+      totalAmount: new Prisma.Decimal(100.0), // Produits
       note: 'Facture avec frais',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -289,9 +275,7 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
           description: 'Carburant',
           accountingCategoryId: 'ac-cat-1',
           amountBeforeTax: new Prisma.Decimal(20.0),
-          tpsAmount: new Prisma.Decimal(1.0),
-          tvqAmount: new Prisma.Decimal(2.0),
-          totalAmount: new Prisma.Decimal(23.0),
+          totalAmount: new Prisma.Decimal(20.0),
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -302,9 +286,7 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
           description: 'Frais de port',
           accountingCategoryId: 'ac-cat-2',
           amountBeforeTax: new Prisma.Decimal(10.0),
-          tpsAmount: new Prisma.Decimal(0.5),
-          tvqAmount: new Prisma.Decimal(1.0),
-          totalAmount: new Prisma.Decimal(11.5),
+          totalAmount: new Prisma.Decimal(10.0),
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -316,18 +298,18 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
 
     const result = await service.findOne('pu-costs-1');
 
-    // 1. Sanctuarisation de totalAmount (produits TTC uniquement)
-    expect(result.totalAmount).toBe('114.98');
+    // 1. Sanctuarisation de totalAmount (produits uniquement)
+    expect(result.totalAmount).toBe('100');
     expect(result.subtotalHT).toBe('100');
 
     // 2. Calculs DTO des frais supplémentaires
     // HT: 20 + 10 = 30.00
     expect(result.additionalCostsTotalHT).toBe('30.00');
-    // TTC: 23 + 11.5 = 34.50
-    expect(result.additionalCostsTotalTTC).toBe('34.50');
+    // Total: 20 + 10 = 30.00
+    expect(result.additionalCostsTotalTTC).toBe('30.00');
 
-    // 3. Grand total facture: 114.98 + 34.50 = 149.48
-    expect(result.invoiceGrandTotal).toBe('149.48');
+    // 3. Grand total facture: 100 + 30.00 = 130.00
+    expect(result.invoiceGrandTotal).toBe('130.00');
   });
 
   it('retourne les totaux égaux lorsque la facture n\'a aucun frais supplémentaire', async () => {
@@ -338,9 +320,7 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
       supplierId: 's-1',
       purchaseDate: new Date('2026-08-15'),
       subtotalHT: new Prisma.Decimal(50.0),
-      tpsAmount: new Prisma.Decimal(2.5),
-      tvqAmount: new Prisma.Decimal(4.99),
-      totalAmount: new Prisma.Decimal(57.49),
+      totalAmount: new Prisma.Decimal(50.0),
       note: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -354,10 +334,10 @@ describe('PurchasesService — Feature A: Total Facture (invoiceGrandTotal)', ()
 
     const result = await service.findOne('pu-nocosts');
 
-    expect(result.totalAmount).toBe('57.49');
+    expect(result.totalAmount).toBe('50');
     expect(result.additionalCostsTotalHT).toBe('0.00');
     expect(result.additionalCostsTotalTTC).toBe('0.00');
-    expect(result.invoiceGrandTotal).toBe('57.49');
+    expect(result.invoiceGrandTotal).toBe('50.00');
   });
 });
 

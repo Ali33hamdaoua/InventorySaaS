@@ -1,11 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Plus, Trash2, Wand2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import {
   PURCHASE_ADDITIONAL_COST_LABEL,
   PurchaseAdditionalCostType,
-  sumTaxes,
-  TPS_RATE,
-  TVQ_RATE,
 } from '@inventorymdb/shared';
 import type { AccountingCategory } from '@/services/accounting-categories.service';
 import { Button } from '@/components/ui/button';
@@ -27,8 +24,6 @@ export interface AdditionalCostDraft {
   description: string;
   accountingCategoryId: string;
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
 }
 
 interface Props {
@@ -42,8 +37,6 @@ const emptyDraft: AdditionalCostDraft = {
   description: '',
   accountingCategoryId: '',
   amountBeforeTax: '0',
-  tpsAmount: '0',
-  tvqAmount: '0',
 };
 
 const COST_TYPE_OPTIONS = Object.entries(PURCHASE_ADDITIONAL_COST_LABEL) as Array<
@@ -55,9 +48,9 @@ const COST_TYPE_OPTIONS = Object.entries(PURCHASE_ADDITIONAL_COST_LABEL) as Arra
  *
  * Contrat métier (V1) :
  *   - Aucune modification des produits ni du WAC.
- *   - Une ligne = un frais = une future ligne comptable HT/TPS/TVQ/TTC
+ *   - Une ligne = un frais = une future ligne comptable
  *     avec `sourceType=PURCHASE_ADDITIONAL_COST` incluse dans le rapport
- *     financier (en HT via la mécanique LOT 2).
+ *     financier (via la mécanique LOT 2).
  */
 export function AdditionalCostsEditor({
   drafts,
@@ -93,19 +86,10 @@ export function AdditionalCostsEditor({
   const addDraft = () => onChange([...drafts, { ...emptyDraft }]);
   const removeDraft = (idx: number) => onChange(drafts.filter((_, i) => i !== idx));
 
-  // Total HT + TTC de tous les frais (aide visuelle)
+  // Total de tous les frais (aide visuelle)
   const totals = drafts.reduce(
-    (acc, d) => {
-      const ht = toNumber(d.amountBeforeTax);
-      const tps = toNumber(d.tpsAmount);
-      const tvq = toNumber(d.tvqAmount);
-      const total = sumTaxes(ht, tps, tvq).total;
-      return {
-        ht: acc.ht + ht,
-        total: acc.total + total,
-      };
-    },
-    { ht: 0, total: 0 },
+    (acc, d) => ({ ht: acc.ht + toNumber(d.amountBeforeTax) }),
+    { ht: 0 },
   );
 
   return (
@@ -126,21 +110,12 @@ export function AdditionalCostsEditor({
       ) : (
         <div className="space-y-2 rounded-lg border border-border/60 bg-background/40 p-3">
           {drafts.map((d, idx) => {
-            const ht = toNumber(d.amountBeforeTax);
-            const tps = toNumber(d.tpsAmount);
-            const tvq = toNumber(d.tvqAmount);
-            const total = sumTaxes(ht, tps, tvq).total;
-            const suggestTps = () =>
-              updateDraft(idx, { tpsAmount: (ht * TPS_RATE).toFixed(2) });
-            const suggestTvq = () =>
-              updateDraft(idx, { tvqAmount: (ht * TVQ_RATE).toFixed(2) });
-
             const isLast = idx === drafts.length - 1;
             return (
               <div
                 key={idx}
                 ref={isLast ? lastRowRef : undefined}
-                className="grid grid-cols-1 gap-2 rounded-md border border-border/40 bg-background/40 p-2 md:grid-cols-[140px_1fr_140px_100px_100px_100px_80px_32px] md:items-end"
+                className="grid grid-cols-1 gap-2 rounded-md border border-border/40 bg-background/40 p-2 md:grid-cols-[140px_1fr_140px_120px_32px] md:items-end"
               >
                 {/* Type */}
                 <div className="space-y-1">
@@ -200,10 +175,10 @@ export function AdditionalCostsEditor({
                   </Select>
                 </div>
 
-                {/* HT */}
+                {/* Montant */}
                 <div className="space-y-1">
                   <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    HT
+                    Montant
                   </Label>
                   <Input
                     type="number"
@@ -214,72 +189,6 @@ export function AdditionalCostsEditor({
                     onChange={(e) => updateDraft(idx, { amountBeforeTax: e.target.value })}
                     className="h-8 text-right tabular-nums"
                   />
-                </div>
-
-                {/* TPS avec bouton auto */}
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    TPS
-                  </Label>
-                  <div className="flex items-center gap-0.5">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      inputMode="decimal"
-                      value={d.tpsAmount}
-                      onChange={(e) => updateDraft(idx, { tpsAmount: e.target.value })}
-                      className="h-8 text-right tabular-nums"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={suggestTps}
-                      title="5 % du HT"
-                      className="h-7 w-7 shrink-0 text-muted-foreground hover:text-primary"
-                    >
-                      <Wand2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* TVQ avec bouton auto */}
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    TVQ
-                  </Label>
-                  <div className="flex items-center gap-0.5">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      inputMode="decimal"
-                      value={d.tvqAmount}
-                      onChange={(e) => updateDraft(idx, { tvqAmount: e.target.value })}
-                      className="h-8 text-right tabular-nums"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={suggestTvq}
-                      title="9,975 % du HT"
-                      className="h-7 w-7 shrink-0 text-muted-foreground hover:text-primary"
-                    >
-                      <Wand2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Total TTC (readonly) */}
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    TTC
-                  </Label>
-                  <div className="rounded-md bg-primary/[0.08] px-2 py-1.5 text-right text-xs font-semibold text-primary tabular-nums">
-                    {currency.format(total)}
-                  </div>
                 </div>
 
                 {/* Supprimer */}
@@ -298,23 +207,17 @@ export function AdditionalCostsEditor({
           })}
 
           {/* Totaux consolidés */}
-          <div className="flex items-center justify-between gap-6 border-t border-border/60 pt-2 text-xs">
+          <div className="flex items-center justify-end gap-6 border-t border-border/60 pt-2 text-xs">
             <span className="text-muted-foreground">
-              Total frais HT :{' '}
+              Total frais :{' '}
               <strong className="text-foreground tabular-nums">
                 {currency.format(totals.ht)}
-              </strong>
-            </span>
-            <span className="text-muted-foreground">
-              Total frais TTC :{' '}
-              <strong className="text-foreground tabular-nums">
-                {currency.format(totals.total)}
               </strong>
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground">
             Les frais supplémentaires n'affectent pas le prix des produits ni le
-            WAC. Chaque frais devient une dépense comptable HT dans le rapport
+            WAC. Chaque frais devient une dépense comptable dans le rapport
             financier.
           </p>
         </div>

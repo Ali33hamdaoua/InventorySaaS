@@ -26,7 +26,7 @@ export interface ListAccountingExpensesParams {
 
 /**
  * Payload for create/update. V2 manual-tax workflow: the client sends HT,
- * TPS and TVQ explicitly. The backend just sums (total = HT + TPS + TVQ).
+ * a single amount. The backend mirrors it into `totalAmount`.
  *
  * Category is now free-form: send `categoryName` (the backend `findOrCreate`s
  * a row in `accounting_categories` if no case-insensitive match exists). The
@@ -47,8 +47,6 @@ export interface AccountingExpensePayload {
   referenceNumber?: string | null;
   paymentMethod?: PaymentMethod | null;
   amountBeforeTax: number;
-  tpsAmount: number;
-  tvqAmount: number;
   notes?: string | null;
   /** Per-row opt-in for the financial report. Defaults to false on the
    *  server when omitted. */

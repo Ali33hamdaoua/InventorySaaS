@@ -62,8 +62,6 @@ function serializePurchase(p: PurchaseRow) {
   const serializedAdditionalCosts = p.additionalCosts.map((c) => ({
     ...c,
     amountBeforeTax: c.amountBeforeTax.toString(),
-    tpsAmount: c.tpsAmount.toString(),
-    tvqAmount: c.tvqAmount.toString(),
     totalAmount: c.totalAmount.toString(),
   }));
 
@@ -84,8 +82,6 @@ function serializePurchase(p: PurchaseRow) {
   return {
     ...p,
     subtotalHT: p.subtotalHT.toString(),
-    tpsAmount: p.tpsAmount.toString(),
-    tvqAmount: p.tvqAmount.toString(),
     totalAmount: p.totalAmount.toString(),
     items: p.items.map((it) => ({
       ...it,
@@ -178,18 +174,11 @@ export class PurchasesService {
   /**
    * Authoritative purchase totals.
    *
-   * Subtotal HT = Σ (line.quantity × line.unitPrice), always derived from
-   * the items. TPS and TVQ are taken FROM USER INPUT — we no longer apply
-   * 5 % / 9.975 % automatically; some invoices have partial / zero / custom
-   * tax (e.g. reimbursements, mixed taxable + exempt). The backend only
-   * enforces the invariant `total = subtotal + tps + tvq`.
+   * Subtotal = Σ (line.quantity × line.unitPrice), always derived from the
+   * items. There is no tax breakdown — `total === subtotal`.
    */
-  private computeTotals(
-    items: Array<{ quantity: number; unitPrice: number }>,
-    tpsInput: number,
-    tvqInput: number,
-  ) {
-    return calculatePurchaseTotals(items, tpsInput, tvqInput);
+  private computeTotals(items: Array<{ quantity: number; unitPrice: number }>) {
+    return calculatePurchaseTotals(items);
   }
 
   // -------------------------------------------------------------------
@@ -255,8 +244,6 @@ export class PurchasesService {
       data: rows.map((p) => ({
         ...p,
         subtotalHT: p.subtotalHT.toString(),
-        tpsAmount: p.tpsAmount.toString(),
-        tvqAmount: p.tvqAmount.toString(),
         totalAmount: p.totalAmount.toString(),
       })),
       total,
@@ -313,7 +300,7 @@ export class PurchasesService {
     const [agg, perSupplier] = await Promise.all([
       this.prisma.purchase.aggregate({
         where: baseWhere,
-        _sum: { totalAmount: true, subtotalHT: true, tpsAmount: true, tvqAmount: true },
+        _sum: { totalAmount: true, subtotalHT: true },
         _count: { _all: true },
       }),
       this.prisma.purchase.groupBy({
@@ -350,8 +337,6 @@ export class PurchasesService {
       year,
       totalAmount: totalAmount.toString(),
       subtotalHT: (agg._sum.subtotalHT ?? new Prisma.Decimal(0)).toString(),
-      tpsAmount: (agg._sum.tpsAmount ?? new Prisma.Decimal(0)).toString(),
-      tvqAmount: (agg._sum.tvqAmount ?? new Prisma.Decimal(0)).toString(),
       purchasesCount: count,
       topSupplier,
       averageBasket: avg.toString(),
@@ -365,7 +350,7 @@ export class PurchasesService {
   /**
    * Creates or refreshes the single `AccountingExpense` row that mirrors a
    * `Purchase`. One row per purchase regardless of how many items it has —
-   * the row carries the header totals (subtotalHT / TPS / TVQ / totalTTC).
+   * the row carries the header totals (subtotalHT / totalAmount).
    *
    * Called inside the same transaction as the purchase create/update so the
    * books are always in sync.
@@ -428,8 +413,6 @@ export class PurchasesService {
         // Header totals — never per-item. The Accounting row carries the
         // invoice-level numbers directly from the Purchase.
         amountBeforeTax: p.subtotalHT,
-        tpsAmount: p.tpsAmount,
-        tvqAmount: p.tvqAmount,
         totalAmount: p.totalAmount,
         notes: p.note ?? null,
         sourceType: AccountingSourceType.PURCHASE,
@@ -544,8 +527,6 @@ export class PurchasesService {
       description?: string;
       accountingCategoryId: string;
       amountBeforeTax: number;
-      tpsAmount: number;
-      tvqAmount: number;
     }>,
   ): Promise<void> {
     // 1. Drop l'existant. Cascade FK nettoie les AccountingExpense mirror.
@@ -557,9 +538,7 @@ export class PurchasesService {
 
     // 2. Insérer les nouveaux frais et récupérer leurs ids pour le mirror.
     for (const input of inputs) {
-      const total = roundToCents(
-        input.amountBeforeTax + input.tpsAmount + input.tvqAmount,
-      );
+      const total = roundToCents(input.amountBeforeTax);
       const created = await tx.purchaseAdditionalCost.create({
         data: {
           purchaseId: purchase.id,
@@ -568,8 +547,6 @@ export class PurchasesService {
           description: input.description ?? null,
           accountingCategoryId: input.accountingCategoryId,
           amountBeforeTax: new Prisma.Decimal(input.amountBeforeTax),
-          tpsAmount: new Prisma.Decimal(input.tpsAmount),
-          tvqAmount: new Prisma.Decimal(input.tvqAmount),
           totalAmount: new Prisma.Decimal(total),
         },
       });
@@ -594,8 +571,6 @@ export class PurchasesService {
           referenceNumber: null,
           paymentMethod: null,
           amountBeforeTax: new Prisma.Decimal(input.amountBeforeTax),
-          tpsAmount: new Prisma.Decimal(input.tpsAmount),
-          tvqAmount: new Prisma.Decimal(input.tvqAmount),
           totalAmount: new Prisma.Decimal(total),
           notes: input.description ?? null,
           sourceType: AccountingSourceType.PURCHASE_ADDITIONAL_COST,
@@ -632,7 +607,7 @@ export class PurchasesService {
       );
     }
 
-    const totals = this.computeTotals(dto.items, dto.tpsAmount, dto.tvqAmount);
+    const totals = this.computeTotals(dto.items);
 
     const row = await this.prisma.$transaction(async (tx) => {
       const items = dto.items.map((i, idx) => ({
@@ -649,8 +624,6 @@ export class PurchasesService {
           purchaseDate: dto.purchaseDate,
           note: dto.note ?? null,
           subtotalHT: new Prisma.Decimal(totals.subtotal),
-          tpsAmount: new Prisma.Decimal(totals.tps),
-          tvqAmount: new Prisma.Decimal(totals.tvq),
           totalAmount: new Prisma.Decimal(totals.total),
           items: { create: items },
         },
@@ -730,27 +703,21 @@ export class PurchasesService {
         ...(dto.note !== undefined && { note: dto.note }),
       };
 
-      // If items, tps, or tvq changed → recompute totals from the merged view.
+      // If items changed → recompute totals from the merged view.
       // Otherwise, header-only update.
       const itemsChanged = !!dto.items;
-      const tpsChanged = dto.tpsAmount !== undefined;
-      const tvqChanged = dto.tvqAmount !== undefined;
 
-      if (itemsChanged || tpsChanged || tvqChanged) {
+      if (itemsChanged) {
         const items = dto.items ?? existing.items.map((i) => ({
           productId: i.productId,
           quantity: i.quantity.toNumber(),
           unitPrice: i.unitPrice.toNumber(),
         }));
-        const tpsInput = tpsChanged ? dto.tpsAmount! : existing.tpsAmount.toNumber();
-        const tvqInput = tvqChanged ? dto.tvqAmount! : existing.tvqAmount.toNumber();
-        const totals = this.computeTotals(items, tpsInput, tvqInput);
+        const totals = this.computeTotals(items);
 
         const data: Prisma.PurchaseUpdateInput = {
           ...headerData,
           subtotalHT: new Prisma.Decimal(totals.subtotal),
-          tpsAmount: new Prisma.Decimal(totals.tps),
-          tvqAmount: new Prisma.Decimal(totals.tvq),
           totalAmount: new Prisma.Decimal(totals.total),
         };
 
@@ -768,13 +735,9 @@ export class PurchasesService {
 
         const updated = await tx.purchase.update({ where: { id }, data, include: PURCHASE_INCLUDE });
         await this.syncAccountingExpensesForPurchase(tx, id);
-        // Si les items ont changé (ou juste les taxes qui ont forcé une
-        // recompute), on re-synchronise defaultCost avec les prix courants.
-        // On utilise `items` (soit dto.items, soit les existants) qui est
-        // en scope depuis la branche `itemsChanged || tpsChanged || tvqChanged`.
-        if (itemsChanged) {
-          await this.syncProductDefaultCostsFromPurchase(tx, items);
-        }
+        // Les items ont changé → on re-synchronise defaultCost avec les
+        // prix courants.
+        await this.syncProductDefaultCostsFromPurchase(tx, items);
         // Frais supplémentaires — sync UNIQUEMENT si le dto en fournit
         // explicitement (undefined = « ne touche pas », [] = « efface tout »).
         if (dto.additionalCosts !== undefined) {
@@ -844,8 +807,7 @@ export class PurchasesService {
 // ---------------------------------------------------------------------
 
 /** Arrondi au cent (2 décimales) via Math.round pour éviter les
- *  artefacts flottants (ex : 0.1 + 0.2). Utilisé uniquement pour recomposer
- *  totalAmount = HT + TPS + TVQ côté service. */
+ *  artefacts flottants (ex : 0.1 + 0.2). */
 function roundToCents(n: number): number {
   return Math.round((Number.isFinite(n) ? n : 0) * 100) / 100;
 }

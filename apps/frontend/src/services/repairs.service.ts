@@ -19,8 +19,6 @@ export interface RepairEntryPayload {
   equipment?: string | null;
   vendorName?: string | null;
   amountBeforeTax: number;
-  tpsAmount: number;
-  tvqAmount: number;
   status?: RepairStatus;
   notes?: string | null;
 }

@@ -158,7 +158,7 @@ export default function AccountingPage() {
           <h1 className="text-3xl font-semibold tracking-tight">Dépenses comptables</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
             Centralisez vos dépenses mensuelles et préparez vos exports pour le comptable.
-            Saisissez le montant HT — TPS, TVQ et total TTC sont calculés automatiquement.
+            Saisissez le montant de la dépense.
           </p>
         </div>
 

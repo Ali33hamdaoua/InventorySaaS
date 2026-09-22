@@ -2,12 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
-  sumTaxes,
-  TPS_RATE,
-  TVQ_RATE,
+  sumAmount,
   type PaymentMethod,
 } from '@inventorymdb/shared';
-import { BarChart3, Lock, Wand2 } from 'lucide-react';
+import { BarChart3, Lock } from 'lucide-react';
 import {
   PAYMENT_METHOD_LABEL_FR,
   PAYMENT_METHOD_OPTIONS,
@@ -53,8 +51,6 @@ interface Errors {
   categoryName?: string;
   description?: string;
   amountBeforeTax?: string;
-  tpsAmount?: string;
-  tvqAmount?: string;
 }
 
 const NONE = '__none__';
@@ -102,8 +98,6 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
   const [referenceNumber, setReferenceNumber] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | ''>('');
   const [amountBeforeTax, setAmountBeforeTax] = useState<string>('0');
-  const [tpsInput, setTpsInput] = useState<string>('0');
-  const [tvqInput, setTvqInput] = useState<string>('0');
   const [notes, setNotes] = useState<string>('');
   // Per-row financial-report opt-in. Defaults to FALSE per client spec —
   // accountants tag each expense explicitly. Repairs come back from the
@@ -135,8 +129,6 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
       setReferenceNumber(expense.referenceNumber ?? '');
       setPaymentMethod(expense.paymentMethod ?? '');
       setAmountBeforeTax(String(toNumber(expense.amountBeforeTax)));
-      setTpsInput(String(toNumber(expense.tpsAmount)));
-      setTvqInput(String(toNumber(expense.tvqAmount)));
       setNotes(expense.notes ?? '');
       setIncludeInFinancialReports(!!expense.includeInFinancialReports);
     } else {
@@ -148,8 +140,6 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
       setReferenceNumber('');
       setPaymentMethod('');
       setAmountBeforeTax('0');
-      setTpsInput('0');
-      setTvqInput('0');
       setNotes('');
       setIncludeInFinancialReports(false);
     }
@@ -157,17 +147,10 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
   }, [open, expense]);
 
   // Live preview — same authoritative helper the backend uses.
-  // Manual-tax workflow: HT, TPS, TVQ all come from user inputs;
-  // total is just their sum.
-  const taxBreakdown = useMemo(
-    () => sumTaxes(toNumber(amountBeforeTax), toNumber(tpsInput), toNumber(tvqInput)),
-    [amountBeforeTax, tpsInput, tvqInput],
+  const amountPreview = useMemo(
+    () => sumAmount(toNumber(amountBeforeTax)),
+    [amountBeforeTax],
   );
-
-  const suggestTps = () =>
-    setTpsInput((toNumber(amountBeforeTax) * TPS_RATE).toFixed(2));
-  const suggestTvq = () =>
-    setTvqInput((toNumber(amountBeforeTax) * TVQ_RATE).toFixed(2));
 
   const visibleSuppliers = useMemo(() => {
     const active = suppliers.filter((s) => s.isActive);
@@ -198,8 +181,6 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
         referenceNumber: referenceNumber.trim() || null,
         paymentMethod: paymentMethod || null,
         amountBeforeTax: toNumber(amountBeforeTax),
-        tpsAmount: toNumber(tpsInput),
-        tvqAmount: toNumber(tvqInput),
         notes: notes.trim() || null,
         includeInFinancialReports,
         // Only sent on create — expense never moves between branches.
@@ -272,9 +253,8 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
               </>
             ) : (
               <>
-                Saisissez le <span className="font-medium text-foreground">montant HT</span>,
-                la TPS et la TVQ. Cliquez sur la baguette pour proposer le taux standard
-                (5 % / 9,975 %). Le total TTC est calculé automatiquement.
+                Saisissez le <span className="font-medium text-foreground">montant</span> de
+                la dépense.
               </>
             )}
           </DialogDescription>
@@ -427,10 +407,10 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
             <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Montants
             </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="amountBeforeTax">
-                  Montant HT <span className="text-destructive">*</span>
+                  Montant <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="amountBeforeTax"
@@ -447,68 +427,12 @@ export function AccountingExpenseFormDialog({ open, onOpenChange, suppliers, exp
                 )}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="tpsAmount">TPS</Label>
-                <div className="flex gap-1">
-                  <Input
-                    id="tpsAmount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={tpsInput}
-                    onChange={(e) => setTpsInput(e.target.value)}
-                    className="text-right tabular-nums"
-                    disabled={isAutoExpense}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={suggestTps}
-                    title="Proposer 5 % du HT"
-                    className="h-9 w-9 shrink-0 text-muted-foreground hover:text-primary"
-                    disabled={isAutoExpense}
-                  >
-                    <Wand2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="tvqAmount">TVQ</Label>
-                <div className="flex gap-1">
-                  <Input
-                    id="tvqAmount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={tvqInput}
-                    onChange={(e) => setTvqInput(e.target.value)}
-                    className="text-right tabular-nums"
-                    disabled={isAutoExpense}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={suggestTvq}
-                    title="Proposer 9,975 % du HT"
-                    className="h-9 w-9 shrink-0 text-muted-foreground hover:text-primary"
-                    disabled={isAutoExpense}
-                  >
-                    <Wand2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Total TTC</Label>
+                <Label>Total</Label>
                 <div className="flex h-9 items-center justify-end rounded-md border border-border/60 bg-background px-3 text-right text-sm font-semibold tabular-nums text-primary">
-                  {currency.format(taxBreakdown.total)}
+                  {currency.format(amountPreview.total)}
                 </div>
               </div>
             </div>
-            <p className="mt-3 text-[11px] text-muted-foreground">
-              Total = HT + TPS + TVQ. Le serveur enregistre ces 3 montants tels quels et
-              recalcule uniquement le total.
-            </p>
           </div>
 
           <div className="space-y-1.5">

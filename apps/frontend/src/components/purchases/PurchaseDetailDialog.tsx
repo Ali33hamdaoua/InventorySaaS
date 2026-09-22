@@ -71,16 +71,10 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
   const items = purchase.items ?? [];
 
   const subtotal = toNumber(purchase.subtotalHT);
-  const tps = toNumber(purchase.tpsAmount);
-  const tvq = toNumber(purchase.tvqAmount);
   const total = toNumber(purchase.totalAmount);
   const additionalCosts = purchase.additionalCosts ?? [];
-  const additionalCostsHT = additionalCosts.reduce(
-    (s, c) => s + toNumber(c.amountBeforeTax),
-    0,
-  );
   const additionalCostsTotal = additionalCosts.reduce(
-    (s, c) => s + toNumber(c.totalAmount),
+    (s, c) => s + toNumber(c.amountBeforeTax),
     0,
   );
 
@@ -232,7 +226,7 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                 className="ml-auto text-[10px] text-muted-foreground"
                 title="Comptabilisés séparément — n'affectent pas le prix des produits ni le WAC."
               >
-                (compta séparée, HT dans le rapport financier)
+                (compta séparée, incluse dans le rapport financier)
               </span>
             </div>
             <table className="w-full text-sm">
@@ -240,9 +234,7 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                 <tr className="border-b border-border/40 text-left text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                   <th className="px-3 py-2 font-medium">Type</th>
                   <th className="px-3 py-2 font-medium">Description</th>
-                  <th className="px-3 py-2 text-right font-medium">HT</th>
-                  <th className="px-3 py-2 text-right font-medium">Taxes</th>
-                  <th className="px-3 py-2 text-right font-medium">TTC</th>
+                  <th className="px-3 py-2 text-right font-medium">Montant</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,9 +244,6 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                       c.costType as keyof typeof PURCHASE_ADDITIONAL_COST_LABEL
                     ] ?? c.costType;
                   const ht = toNumber(c.amountBeforeTax);
-                  const cTps = toNumber(c.tpsAmount);
-                  const cTvq = toNumber(c.tvqAmount);
-                  const cTotal = toNumber(c.totalAmount);
                   return (
                     <tr key={c.id} className="border-b border-border/40 last:border-0">
                       <td className="px-3 py-2 font-medium">{label}</td>
@@ -265,14 +254,8 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                           </span>
                         )}
                       </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {currency.format(ht)}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
-                        {currency.format(cTps + cTvq)}
-                      </td>
                       <td className="px-3 py-2 text-right font-medium tabular-nums">
-                        {currency.format(cTotal)}
+                        {currency.format(ht)}
                       </td>
                     </tr>
                   );
@@ -280,12 +263,6 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
                 <tr className="border-t border-amber-500/30 bg-amber-500/[0.05]">
                   <td className="px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-muted-foreground" colSpan={2}>
                     Total frais
-                  </td>
-                  <td className="px-3 py-2 text-right font-semibold tabular-nums">
-                    {currency.format(additionalCostsHT)}
-                  </td>
-                  <td className="px-3 py-2 text-right text-muted-foreground tabular-nums">
-                    {currency.format(additionalCostsTotal - additionalCostsHT)}
                   </td>
                   <td className="px-3 py-2 text-right font-semibold tabular-nums">
                     {currency.format(additionalCostsTotal)}
@@ -300,20 +277,12 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
         <div className="rounded-md border border-border/60 bg-background/40 p-4">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Sous-total produits HT</span>
+              <span className="text-muted-foreground">Sous-total produits</span>
               <span className="tabular-nums">{currency.format(subtotal)}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">TPS produits</span>
-              <span className="tabular-nums text-muted-foreground">{currency.format(tps)}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">TVQ produits</span>
-              <span className="tabular-nums text-muted-foreground">{currency.format(tvq)}</span>
             </div>
             <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2.5">
               <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                Total TTC produits
+                Total produits
               </span>
               <span className={`tabular-nums ${additionalCosts.length > 0 ? 'text-base font-medium' : 'text-xl font-semibold'}`}>
                 {currency.format(total)}
@@ -323,7 +292,7 @@ export function PurchaseDetailDialog({ open, onOpenChange, purchase }: Props) {
               <>
                 <div className="mt-3 flex items-center justify-between border-t border-amber-500/20 pt-2.5 text-sm">
                   <span className="text-muted-foreground">
-                    Frais supplémentaires TTC
+                    Frais supplémentaires
                   </span>
                   <span className="tabular-nums text-amber-500">
                     {currency.format(additionalCostsTotal)}

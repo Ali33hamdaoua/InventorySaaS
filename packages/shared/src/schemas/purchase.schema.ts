@@ -14,9 +14,6 @@ export const createPurchaseSchema = z.object({
   purchaseDate: z.coerce.date(),
   note: z.string().max(500).optional().nullable(),
   items: z.array(purchaseItemSchema).min(1, "Au moins une ligne d'achat"),
-  /** Manual entry — backend just sums HT + TPS + TVQ, no rate enforcement. */
-  tpsAmount: z.coerce.number().nonnegative().default(0),
-  tvqAmount: z.coerce.number().nonnegative().default(0),
 });
 export type CreatePurchaseDto = z.infer<typeof createPurchaseSchema>;
 

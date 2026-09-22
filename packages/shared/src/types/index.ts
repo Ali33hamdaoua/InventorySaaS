@@ -245,11 +245,9 @@ export interface PurchaseDto {
    *  N'INCLUT PAS les frais supplémentaires — ceux-ci sont comptabilisés
    *  séparément et n'entrent JAMAIS dans le WAC ni le food cost. */
   subtotalHT: string;
-  /** TPS (Canada federal 5%) sur les produits uniquement. */
-  tpsAmount: string;
-  /** TVQ (Quebec provincial 9.975%) sur les produits uniquement. */
-  tvqAmount: string;
-  /** subtotalHT + tpsAmount + tvqAmount (produits seuls, hors frais). */
+  /** Égal à `subtotalHT` (produits seuls, hors frais supplémentaires).
+   *  Conservé comme champ distinct car c'est le « total facture produits »
+   *  affiché dans l'UI et agrégé par les rapports. */
   totalAmount: string;
   note: string | null;
   createdAt: string;
@@ -272,7 +270,7 @@ export interface PurchaseDto {
 
   /** Σ additionalCosts[].amountBeforeTax — pre-tax sum of all extra costs. */
   additionalCostsTotalHT?: string;
-  /** Σ additionalCosts[].totalAmount — TTC sum of all extra costs. */
+  /** Σ additionalCosts[].totalAmount — sum of all extra costs. */
   additionalCostsTotalTTC?: string;
   /** totalAmount + additionalCostsTotalTTC — the real amount paid to the
    *  supplier. Displayed as "Total facture" in the UI. */
@@ -291,8 +289,6 @@ export interface PurchaseAdditionalCostDto {
   description: string | null;
   accountingCategoryId: string;
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
   totalAmount: string;
   createdAt: string;
   updatedAt: string;
@@ -305,15 +301,13 @@ export interface PurchaseAdditionalCostDto {
 export interface PurchaseSummaryDto {
   month: number;
   year: number;
-  /** Total TTC across purchases for the period. */
+  /** Total across purchases for the period. */
   totalAmount: string;
-  /** Sum of pre-tax subtotals. */
+  /** Sum of subtotals — equal to `totalAmount`. */
   subtotalHT: string;
-  tpsAmount: string;
-  tvqAmount: string;
   purchasesCount: number;
   topSupplier: { id: string; name: string; totalAmount: string } | null;
-  /** Average basket = totalAmount / purchasesCount (TTC). */
+  /** Average basket = totalAmount / purchasesCount. */
   averageBasket: string;
 }
 
@@ -580,11 +574,9 @@ export interface AccountingExpenseDto {
   description: string;
   referenceNumber: string | null;
   paymentMethod: PaymentMethod | null;
-  /** Decimals serialized as strings. TPS/TVQ/totalAmount are recomputed
+  /** Decimals serialized as strings. `totalAmount` is recomputed
    *  server-side from `amountBeforeTax` on every write. */
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
   totalAmount: string;
   notes: string | null;
   /** Opt-in flag for the financial report. Defaults to false for MANUAL +
@@ -611,9 +603,6 @@ export interface AccountingSummaryDto {
   selectedPeriod: string;
   totalExpenses: number;
   totalBeforeTax: number;
-  totalTPS: number;
-  totalTVQ: number;
-  totalWithTax: number;
   expensesCount: number;
   /** Top category by total amount for the selected period. The id may be
    *  null on legacy summaries that pre-date the dynamic category table. */
@@ -761,9 +750,7 @@ export interface RepairEntryDto {
   vendorName: string | null;
   /** Decimals serialized as strings. */
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
-  /** Always recomputed server-side: `HT + TPS + TVQ`. */
+  /** Always recomputed server-side — equal to `amountBeforeTax`. */
   totalAmount: string;
   status: RepairStatus;
   notes: string | null;

@@ -6,7 +6,7 @@ import {
   RepairEntry,
   RepairStatus,
 } from '@prisma/client';
-import { sumTaxes } from '@inventorymdb/shared';
+import { sumAmount } from '@inventorymdb/shared';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateRepairEntryDto } from './dto/create-repair-entry.dto';
 import { UpdateRepairEntryDto } from './dto/update-repair-entry.dto';
@@ -30,8 +30,6 @@ export interface RepairEntryPayload {
   equipment: string | null;
   vendorName: string | null;
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
   totalAmount: string;
   status: RepairStatus;
   notes: string | null;
@@ -48,8 +46,6 @@ function serialize(row: RepairEntry): RepairEntryPayload {
     equipment: row.equipment,
     vendorName: row.vendorName,
     amountBeforeTax: row.amountBeforeTax.toString(),
-    tpsAmount: row.tpsAmount.toString(),
-    tvqAmount: row.tvqAmount.toString(),
     totalAmount: row.totalAmount.toString(),
     status: row.status,
     notes: row.notes,
@@ -65,9 +61,9 @@ export class RepairsService {
     private readonly accountingCategories: AccountingCategoriesService,
   ) {}
 
-  /** total = HT + TPS + TVQ (always recomputed server-side). */
-  private computeTotal(ht: number, tps: number, tvq: number): Prisma.Decimal {
-    return new Prisma.Decimal(sumTaxes(ht, tps, tvq).total);
+  /** total = HT (always recomputed server-side; no sales tax in Morocco). */
+  private computeTotal(ht: number): Prisma.Decimal {
+    return new Prisma.Decimal(sumAmount(ht).total);
   }
 
   private formatDateFR(d: Date): string {
@@ -83,7 +79,7 @@ export class RepairsService {
    * accountant already has reporting for it, and the financial report's
    * MAINTENANCE category naturally accumulates repair costs.
    *
-   * Taxes flow through from the repair row (HT / TPS / TVQ all carried over).
+   * The amount flows through from the repair row.
    * Upsert keyed by repairId — re-syncs collapse into a single update.
    *
    * Double-count safety: see financial-reports.service.ts. Repairs are
@@ -124,8 +120,6 @@ export class RepairsService {
         referenceNumber: null,
         paymentMethod: null,
         amountBeforeTax: r.amountBeforeTax,
-        tpsAmount: r.tpsAmount,
-        tvqAmount: r.tvqAmount,
         totalAmount: r.totalAmount,
         notes: r.notes ?? null,
         sourceType: AccountingSourceType.REPAIR,
@@ -143,8 +137,6 @@ export class RepairsService {
         accountingCategoryId: category.id,
         description,
         amountBeforeTax: r.amountBeforeTax,
-        tpsAmount: r.tpsAmount,
-        tvqAmount: r.tvqAmount,
         totalAmount: r.totalAmount,
         notes: r.notes ?? null,
         sourceType: AccountingSourceType.REPAIR,
@@ -206,7 +198,7 @@ export class RepairsService {
 
   async create(dto: CreateRepairEntryDto, user?: RequestUser): Promise<RepairEntryPayload> {
     const branchId = resolveBranchForMutation(user, dto.branchId);
-    const total = this.computeTotal(dto.amountBeforeTax, dto.tpsAmount, dto.tvqAmount);
+    const total = this.computeTotal(dto.amountBeforeTax);
     const row = await this.prisma.$transaction(async (tx) => {
       const created = await tx.repairEntry.create({
         data: {
@@ -216,8 +208,6 @@ export class RepairsService {
           equipment: dto.equipment?.trim() || null,
           vendorName: dto.vendorName?.trim() || null,
           amountBeforeTax: new Prisma.Decimal(dto.amountBeforeTax),
-          tpsAmount: new Prisma.Decimal(dto.tpsAmount),
-          tvqAmount: new Prisma.Decimal(dto.tvqAmount),
           totalAmount: total,
           status: dto.status ?? RepairStatus.PLANNED,
           notes: dto.notes?.trim() || null,
@@ -234,8 +224,6 @@ export class RepairsService {
     if (!existing) throw new NotFoundException('Réparation introuvable');
 
     const ht = dto.amountBeforeTax ?? Number(existing.amountBeforeTax.toString());
-    const tps = dto.tpsAmount ?? Number(existing.tpsAmount.toString());
-    const tvq = dto.tvqAmount ?? Number(existing.tvqAmount.toString());
 
     const row = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.repairEntry.update({
@@ -248,9 +236,7 @@ export class RepairsService {
           ...(dto.amountBeforeTax !== undefined && {
             amountBeforeTax: new Prisma.Decimal(dto.amountBeforeTax),
           }),
-          ...(dto.tpsAmount !== undefined && { tpsAmount: new Prisma.Decimal(dto.tpsAmount) }),
-          ...(dto.tvqAmount !== undefined && { tvqAmount: new Prisma.Decimal(dto.tvqAmount) }),
-          totalAmount: this.computeTotal(ht, tps, tvq),
+          totalAmount: this.computeTotal(ht),
           ...(dto.status !== undefined && { status: dto.status }),
           ...(dto.notes !== undefined && { notes: dto.notes?.trim() || null }),
         },

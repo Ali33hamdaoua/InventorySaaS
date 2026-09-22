@@ -9,7 +9,7 @@ import {
   ExpenseCategory,
   Prisma,
 } from '@prisma/client';
-import { sumTaxes } from '@inventorymdb/shared';
+import { sumAmount } from '@inventorymdb/shared';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AccountingCategoriesService } from '../accounting-categories/accounting-categories.service';
 import { CreateAccountingExpenseDto } from './dto/create-accounting-expense.dto';
@@ -46,11 +46,9 @@ type ExpenseWithRelations = AccountingExpense & {
  */
 export interface AccountingExpenseDto extends Omit<
   ExpenseWithRelations,
-  'amountBeforeTax' | 'tpsAmount' | 'tvqAmount' | 'totalAmount' | 'purchaseItem'
+  'amountBeforeTax' | 'totalAmount' | 'purchaseItem'
 > {
   amountBeforeTax: string;
-  tpsAmount: string;
-  tvqAmount: string;
   totalAmount: string;
   /** Flattened category NAME — null only if the row pre-dates the migration
    *  (shouldn't happen on a clean DB; defensive null for cosmetic display). */
@@ -67,8 +65,6 @@ function serialize(row: ExpenseWithRelations): AccountingExpenseDto {
   return {
     ...row,
     amountBeforeTax: row.amountBeforeTax.toString(),
-    tpsAmount: row.tpsAmount.toString(),
-    tvqAmount: row.tvqAmount.toString(),
     totalAmount: row.totalAmount.toString(),
     categoryName: row.accountingCategory?.name ?? null,
   } as AccountingExpenseDto;
@@ -91,13 +87,12 @@ export class AccountingService {
   // -------------------------------------------------------------------
 
   /**
-   * Authoritative total = HT + TPS + TVQ. The user enters all three values
-   * manually — backend no longer infers TPS/TVQ from the HT (5 % / 9.975 %
-   * were too restrictive for partial-tax invoices). We just enforce the
-   * sum invariant; the UI pre-fills the rates as a convenience.
+   * Authoritative total. Sales taxes were removed with the move to Morocco,
+   * so the total simply mirrors the entered amount — this stays a single
+   * rounding point shared with the frontend preview.
    */
-  private computeTaxBreakdown(amountBeforeTax: number, tps: number, tvq: number) {
-    return sumTaxes(amountBeforeTax, tps, tvq);
+  private computeAmount(amountBeforeTax: number) {
+    return sumAmount(amountBeforeTax);
   }
 
   private async assertSupplierExists(supplierId: string) {
@@ -247,8 +242,6 @@ export class AccountingService {
         where,
         _sum: {
           amountBeforeTax: true,
-          tpsAmount: true,
-          tvqAmount: true,
           totalAmount: true,
         },
         _count: { _all: true },
@@ -284,9 +277,6 @@ export class AccountingService {
       totalExpenses: agg._count._all,
       expensesCount: agg._count._all,
       totalBeforeTax: Number(agg._sum.amountBeforeTax ?? 0),
-      totalTPS: Number(agg._sum.tpsAmount ?? 0),
-      totalTVQ: Number(agg._sum.tvqAmount ?? 0),
-      totalWithTax: Number(agg._sum.totalAmount ?? 0),
       topCategory,
     };
   }
@@ -301,7 +291,7 @@ export class AccountingService {
       await this.assertSupplierExists(dto.supplierId);
     }
 
-    const taxes = this.computeTaxBreakdown(dto.amountBeforeTax, dto.tpsAmount, dto.tvqAmount);
+    const amounts = this.computeAmount(dto.amountBeforeTax);
 
     // Resolve the free-form category name → id (creates the category if
     // needed). The whole thing runs in a transaction so an HTTP-level retry
@@ -323,10 +313,8 @@ export class AccountingService {
           description: dto.description,
           referenceNumber: dto.referenceNumber ?? null,
           paymentMethod: dto.paymentMethod ?? null,
-          amountBeforeTax: new Prisma.Decimal(taxes.subtotal),
-          tpsAmount: new Prisma.Decimal(taxes.tps),
-          tvqAmount: new Prisma.Decimal(taxes.tvq),
-          totalAmount: new Prisma.Decimal(taxes.total),
+          amountBeforeTax: new Prisma.Decimal(amounts.subtotal),
+          totalAmount: new Prisma.Decimal(amounts.total),
           notes: dto.notes ?? null,
           // Default per client spec — manual expenses are OPT-IN for the
           // financial report. The frontend toggle just maps to this flag.
@@ -395,9 +383,7 @@ export class AccountingService {
         dto.description !== undefined ||
         dto.referenceNumber !== undefined ||
         dto.paymentMethod !== undefined ||
-        dto.amountBeforeTax !== undefined ||
-        dto.tpsAmount !== undefined ||
-        dto.tvqAmount !== undefined;
+        dto.amountBeforeTax !== undefined;
       if (editableFieldChanged) {
         throw new BadRequestException(
           AccountingService.sourceLockMessage(existing.sourceType, 'modifier'),
@@ -420,13 +406,10 @@ export class AccountingService {
       await this.assertSupplierExists(dto.supplierId);
     }
 
-    // V2 manual-tax workflow: HT, TPS and TVQ are 3 independent user inputs.
-    // For each, fall back to the existing value if not provided in the patch.
+    // Fall back to the existing amount if the patch does not carry one.
     const amountBeforeTax =
       dto.amountBeforeTax ?? Number(existing.amountBeforeTax.toString());
-    const tpsAmount = dto.tpsAmount ?? Number(existing.tpsAmount.toString());
-    const tvqAmount = dto.tvqAmount ?? Number(existing.tvqAmount.toString());
-    const taxes = this.computeTaxBreakdown(amountBeforeTax, tpsAmount, tvqAmount);
+    const amounts = this.computeAmount(amountBeforeTax);
 
     const row = await this.prisma.$transaction(async (tx) => {
       // Resolve the new category name only if provided in the patch.
@@ -445,10 +428,8 @@ export class AccountingService {
           ...(dto.description && { description: dto.description }),
           ...(dto.referenceNumber !== undefined && { referenceNumber: dto.referenceNumber }),
           ...(dto.paymentMethod !== undefined && { paymentMethod: dto.paymentMethod }),
-          amountBeforeTax: new Prisma.Decimal(taxes.subtotal),
-          tpsAmount: new Prisma.Decimal(taxes.tps),
-          tvqAmount: new Prisma.Decimal(taxes.tvq),
-          totalAmount: new Prisma.Decimal(taxes.total),
+          amountBeforeTax: new Prisma.Decimal(amounts.subtotal),
+          totalAmount: new Prisma.Decimal(amounts.total),
           ...(dto.notes !== undefined && { notes: dto.notes }),
           ...(dto.includeInFinancialReports !== undefined && {
             includeInFinancialReports: dto.includeInFinancialReports,

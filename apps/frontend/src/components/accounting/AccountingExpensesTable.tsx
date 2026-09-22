@@ -93,14 +93,7 @@ export function AccountingExpensesTable({
             <th className="whitespace-nowrap px-3 pb-2 font-medium">Catégorie</th>
             <th className="whitespace-nowrap px-3 pb-2 font-medium">Fournisseur</th>
             <th className="px-3 pb-2 font-medium">Description</th>
-            <th className="whitespace-nowrap px-3 pb-2 text-right font-medium">HT</th>
-            <th className="hidden whitespace-nowrap px-3 pb-2 text-right font-medium md:table-cell">
-              TPS
-            </th>
-            <th className="hidden whitespace-nowrap px-3 pb-2 text-right font-medium md:table-cell">
-              TVQ
-            </th>
-            <th className="whitespace-nowrap px-3 pb-2 text-right font-medium">Total TTC</th>
+            <th className="whitespace-nowrap px-3 pb-2 text-right font-medium">Montant</th>
             <th className="hidden whitespace-nowrap px-3 pb-2 font-medium lg:table-cell">
               Paiement
             </th>
@@ -122,9 +115,6 @@ export function AccountingExpensesTable({
               ))
             : expenses.map((e) => {
                 const dateLabel = formatBusinessDate(e.expenseDate, DATE_FORMAT_OPTS);
-                const ht = toNumber(e.amountBeforeTax);
-                const tps = toNumber(e.tpsAmount);
-                const tvq = toNumber(e.tvqAmount);
                 const total = toNumber(e.totalAmount);
                 const supplierLabel = e.supplier?.name ?? e.supplierName ?? '—';
                 const meta = sourceMeta(e);
@@ -195,15 +185,6 @@ export function AccountingExpensesTable({
                           </span>
                         )}
                       </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
-                      {currency.format(ht)}
-                    </td>
-                    <td className="hidden whitespace-nowrap px-3 py-3 text-right text-muted-foreground tabular-nums md:table-cell">
-                      {currency.format(tps)}
-                    </td>
-                    <td className="hidden whitespace-nowrap px-3 py-3 text-right text-muted-foreground tabular-nums md:table-cell">
-                      {currency.format(tvq)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-right font-medium tabular-nums">
                       {currency.format(total)}
